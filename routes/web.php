@@ -2,9 +2,10 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
-// Pastikan controller dashboard ini sudah kamu buat ya bg, kalau belum buat dlu filenya
-// use App\Http\Controllers\AdminController; 
-// use App\Http\Controllers\GuruController;
+use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Guru\DashboardController as GuruDashboard;
+use App\Http\Controllers\Orangtua\DashboardController as OrangtuaDashboard;
+
 
 // 1. Redirect halaman utama ke login
 Route::get('/', function () {
@@ -24,20 +25,14 @@ Route::get('/reset-password', [AuthController::class, 'showResetForm'])->name('p
 Route::post('/reset-password', [AuthController::class, 'resetPassword'])->name('password.update');
 
 // 4. Grouping Berdasarkan Role
-Route::middleware(['auth', 'role:admin'])->group(function () {
-    Route::get('/admin/dashboard', function() {
-        return "Halo Admin! Ini Dashboard kamu.";
-    });
+Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('admin.dashboard');
 });
 
-Route::middleware(['auth', 'role:guru'])->group(function () {
-    Route::get('/guru/dashboard', function() {
-        return "Halo Guru! Ini Dashboard kamu.";
-    });
+Route::middleware(['auth', 'role:guru'])->prefix('guru')->group(function () {
+    Route::get('/dashboard', [GuruDashboard::class, 'index'])->name('guru.dashboard');
 });
 
-Route::middleware(['auth', 'role:orangtua'])->group(function () {
-    Route::get('/orangtua/dashboard', function() {
-        return "Halo Orangtua! Ini Dashboard kamu.";
-    });
+Route::middleware(['auth', 'role:orangtua'])->prefix('orangtua')->group(function () {
+    Route::get('/dashboard', [OrangtuaDashboard::class, 'index'])->name('orangtua.dashboard');
 });
