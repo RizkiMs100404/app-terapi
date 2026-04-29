@@ -1,164 +1,278 @@
 @extends('admin.layouts.main')
 
 @section('content')
-<div class="relative overflow-hidden mb-8 p-8 md:p-12 bg-white border border-gray-100 rounded-[2.5rem] shadow-sm dark:bg-gray-900 dark:border-gray-800 transition-all duration-300 group">
-
-<div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 mb-8">
-    <div class="group p-6 bg-white border border-gray-100 rounded-[2rem] shadow-sm hover:shadow-xl transition-all duration-300 dark:bg-gray-900 dark:border-gray-800">
-        <div class="flex items-start justify-between">
-            <div>
-                <p class="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-[0.2em] mb-1">Total Siswa</p>
-                <h3 class="text-3xl font-black text-gray-900 dark:text-white">{{ $total_siswa }}</h3>
-            </div>
-            <div class="p-4 bg-blue-50 text-blue-600 rounded-2xl dark:bg-blue-900/20 dark:text-blue-400 group-hover:bg-blue-600 group-hover:text-white transition-all duration-300">
-                <i class="fa-solid fa-user-graduate text-xl"></i>
-            </div>
+<div class="min-h-screen bg-[#F8FAFC] p-4 md:p-8">
+    {{-- Header Section --}}
+    <div class="flex flex-col md:flex-row md:items-center justify-between mb-10 gap-4">
+        <div>
+            <h1 class="text-4xl font-extrabold text-slate-900 tracking-tight">Dashboard <span class="text-blue-600">Admin</span></h1>
+            <p class="text-slate-500 mt-1 flex items-center gap-2">
+                <span class="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                Monitoring real-time tumbuh kembang siswa
+            </p>
         </div>
-        <div class="mt-4 flex items-center text-[10px] font-bold text-green-500 bg-green-50 dark:bg-green-900/20 px-2 py-1 rounded-lg w-fit">
-            AKTIF TERDAFTAR
-        </div>
-    </div>
-
-    <div class="group p-6 bg-white border border-gray-100 rounded-[2rem] shadow-sm hover:shadow-xl transition-all duration-300 dark:bg-gray-900 dark:border-gray-800">
-        <div class="flex items-start justify-between">
-            <div>
-                <p class="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-[0.2em] mb-1">Guru Terapis</p>
-                <h3 class="text-3xl font-black text-gray-900 dark:text-white">{{ $total_terapis }}</h3>
-            </div>
-            <div class="p-4 bg-purple-50 text-purple-600 rounded-2xl dark:bg-purple-900/20 dark:text-purple-400 group-hover:bg-purple-600 group-hover:text-white transition-all duration-300">
-                <i class="fa-solid fa-user-doctor text-xl"></i>
-            </div>
-        </div>
-        <div class="mt-4 flex items-center text-[10px] font-bold text-purple-500 bg-purple-50 dark:bg-purple-900/20 px-2 py-1 rounded-lg w-fit uppercase">
-            Staf Ahli
-        </div>
-    </div>
-
-    <div class="group p-6 bg-white border border-gray-100 rounded-[2rem] shadow-sm hover:shadow-xl transition-all duration-300 dark:bg-gray-900 dark:border-gray-800">
-        <div class="flex items-start justify-between">
-            <div>
-                <p class="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-[0.2em] mb-1">Sesi Hari Ini</p>
-                <h3 class="text-3xl font-black text-gray-900 dark:text-white">{{ $jadwal_hari_ini }}</h3>
-            </div>
-            <div class="p-4 bg-yellow-50 text-yellow-600 rounded-2xl dark:bg-yellow-900/20 dark:text-yellow-400 group-hover:bg-yellow-500 group-hover:text-white transition-all duration-300">
-                <i class="fa-solid fa-calendar-check text-xl"></i>
-            </div>
-        </div>
-        <div class="mt-4 flex items-center text-[10px] font-bold text-yellow-600 bg-yellow-50 dark:bg-yellow-900/20 px-2 py-1 rounded-lg w-fit uppercase tracking-widest italic">
-            Running Now
-        </div>
-    </div>
-
-    <div class="group p-6 bg-white border border-gray-100 rounded-[2rem] shadow-sm hover:shadow-xl transition-all duration-300 dark:bg-gray-900 dark:border-gray-800">
-        <div class="flex items-start justify-between">
-            <div>
-                <p class="text-[10px] font-bold text-gray-400 dark:text-gray-500 uppercase tracking-[0.2em] mb-1">Laporan Baru</p>
-                <h3 class="text-3xl font-black text-gray-900 dark:text-white">{{ $laporan_baru }}</h3>
-            </div>
-            <div class="p-4 bg-green-50 text-green-600 rounded-2xl dark:bg-green-900/20 dark:text-green-400 group-hover:bg-green-600 group-hover:text-white transition-all duration-300">
-                <i class="fa-solid fa-file-waveform text-xl"></i>
-            </div>
-        </div>
-        <div class="mt-4 flex items-center text-[10px] font-bold text-green-600 bg-green-50 dark:bg-green-900/20 px-2 py-1 rounded-lg w-fit">
-            <span class="animate-pulse mr-1 inline-block w-2 h-2 bg-green-500 rounded-full"></span> NEED REVIEW
-        </div>
-    </div>
-</div>
-
-<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-    <div class="lg:col-span-2 bg-white dark:bg-gray-900 p-8 rounded-[2.5rem] border border-gray-100 dark:border-gray-800 shadow-sm">
-        <div class="flex items-center justify-between mb-8">
-            <div>
-                <h2 class="text-xl font-black text-gray-900 dark:text-white tracking-tight">Rata-rata Perkembangan Siswa</h2>
-                <p class="text-sm text-gray-500 font-medium">Data akumulasi seluruh jenis terapi (2026)</p>
-            </div>
-            <div class="flex gap-2">
-                <button class="px-4 py-2 text-xs font-bold bg-blue-50 dark:bg-blue-900/30 text-blue-600 rounded-xl">Bulanan</button>
-                <button class="px-4 py-2 text-xs font-bold text-gray-400 hover:text-gray-600">Tahunan</button>
-            </div>
-        </div>
-        <div class="relative h-[300px]">
-            <canvas id="developmentChart"></canvas>
-        </div>
-    </div>
-
-    <div class="bg-white dark:bg-gray-900 p-8 rounded-[2.5rem] border border-gray-100 dark:border-gray-800 shadow-sm">
-        <h2 class="text-xl font-black text-gray-900 dark:text-white mb-6 tracking-tight">Log Aktivitas Terbaru</h2>
-        <div class="space-y-6">
-            @for ($i = 1; $i <= 4; $i++)
-            <div class="flex items-center gap-4 group cursor-pointer">
-                <div class="w-12 h-12 rounded-2xl bg-gray-50 dark:bg-gray-800 flex items-center justify-center group-hover:bg-blue-50 transition-colors">
-                    <i class="fa-solid fa-circle-dot text-[8px] text-blue-500"></i>
+        <div class="flex items-center gap-4">
+            <div class="flex items-center gap-3 bg-white p-3 rounded-2xl shadow-sm border border-slate-100">
+                <div class="h-10 w-10 bg-indigo-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-indigo-200">
+                    <i class="fas fa-calendar-alt"></i>
                 </div>
-                <div class="flex-grow">
-                    <p class="text-sm font-bold text-gray-800 dark:text-gray-200">Guru Budi menginput laporan</p>
-                    <p class="text-[10px] text-gray-400 font-bold uppercase tracking-wider mt-0.5">Siswa: Siti A. • 10 Menit lalu</p>
+                <div>
+                    <p class="text-xs font-bold text-slate-400 uppercase tracking-wider">Hari Ini</p>
+                    <p class="text-sm font-bold text-slate-700">{{ now()->translatedFormat('l, d F Y') }}</p>
                 </div>
             </div>
-            @endfor
         </div>
-        <button class="w-full mt-8 py-4 border-2 border-dashed border-gray-100 dark:border-gray-800 rounded-2xl text-sm font-bold text-gray-400 hover:border-blue-200 hover:text-blue-500 transition-all">
-            Lihat Semua Aktivitas
-        </button>
+    </div>
+
+    {{-- Stats Cards --}}
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+        {{-- Card Stat 1 --}}
+        <div class="group bg-white rounded-[2rem] p-7 shadow-sm border border-slate-100 relative overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+            <div class="absolute -right-4 -top-4 w-24 h-24 bg-blue-50 rounded-full group-hover:scale-150 transition-transform duration-500"></div>
+            <div class="relative z-10">
+                <p class="text-slate-500 font-medium mb-1">Total Siswa</p>
+                <h3 class="text-4xl font-black text-slate-800">{{ $jumlahSiswa }}</h3>
+                <div class="mt-4 flex items-center text-blue-600 text-[11px] font-bold uppercase tracking-wider">
+                    <span class="bg-blue-100 px-2 py-1 rounded-lg mr-2">Aktif</span>
+                    <span>Anak Berkebutuhan Khusus</span>
+                </div>
+            </div>
+        </div>
+
+        {{-- Card Stat 2 --}}
+        <div class="group bg-white rounded-[2rem] p-7 shadow-sm border border-slate-100 relative overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+            <div class="absolute -right-4 -top-4 w-24 h-24 bg-emerald-50 rounded-full group-hover:scale-150 transition-transform duration-500"></div>
+            <div class="relative z-10">
+                <p class="text-slate-500 font-medium mb-1">Guru Pelaksana</p>
+                <h3 class="text-4xl font-black text-slate-800">{{ $jumlahGuru }}</h3>
+                <div class="mt-4 flex items-center text-emerald-600 text-[11px] font-bold uppercase tracking-wider">
+                    <span class="bg-emerald-100 px-2 py-1 rounded-lg mr-2">Expert</span>
+                    <span>Terapis Bersertifikasi</span>
+                </div>
+            </div>
+        </div>
+
+        {{-- Card Stat 3 --}}
+        <div class="group bg-white rounded-[2rem] p-7 shadow-sm border border-slate-100 relative overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+            <div class="absolute -right-4 -top-4 w-24 h-24 bg-purple-50 rounded-full group-hover:scale-150 transition-transform duration-500"></div>
+            <div class="relative z-10">
+                <p class="text-slate-500 font-medium mb-1">Sesi Terlaksana</p>
+                <h3 class="text-4xl font-black text-slate-800">{{ $totalSesi }}</h3>
+                <div class="mt-4 flex items-center text-purple-600 text-[11px] font-bold uppercase tracking-wider">
+                    <span class="bg-purple-100 px-2 py-1 rounded-lg mr-2">Update</span>
+                    <span>Total Rekapitulasi Sesi</span>
+                </div>
+            </div>
+        </div>
+
+        {{-- Pro Card --}}
+        <div class="bg-gradient-to-br from-indigo-600 to-violet-700 rounded-[2rem] p-7 shadow-lg shadow-indigo-200 relative overflow-hidden group">
+            <div class="absolute right-[-10%] top-[-10%] opacity-10 w-32 h-32 rotate-12 group-hover:rotate-45 transition-transform duration-700">
+                <svg fill="white" viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm0 18c-4.4 0-8-3.6-8-8s3.6-8 8-8 8 3.6 8 8-3.6 8-8 8zm.5-13H11v6l5.2 3.2.8-1.3-4.5-2.7V7z"/></svg>
+            </div>
+            <p class="text-indigo-100 font-medium mb-1">Sesi Terakhir</p>
+            <h3 class="text-xl font-bold text-white mt-2 leading-tight">Pantau Aktivitas <br>Secara Presisi</h3>
+            <div class="mt-4 inline-flex items-center gap-2 bg-white/20 backdrop-blur-md px-3 py-1.5 rounded-xl text-white text-xs font-bold">
+                <i class="fas fa-shield-check"></i> Data Terproteksi
+            </div>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {{-- Chart Section --}}
+        <div class="lg:col-span-2 bg-white rounded-[2.5rem] p-8 shadow-sm border border-slate-100">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
+                <div>
+                    <h2 class="text-xl font-extrabold text-slate-800 tracking-tight">Metrik Kemajuan Siswa</h2>
+                    <p class="text-sm text-slate-400 font-medium">Analisis efektivitas terapi periode ini</p>
+                </div>
+                {{-- Toggle Filter --}}
+                <div class="flex p-1.5 bg-slate-100 rounded-2xl w-full sm:w-auto">
+                    <button onclick="updateChartType('sesi')" id="btn-sesi" class="chart-toggle-btn active flex-1 sm:flex-none px-4 py-2 rounded-xl text-xs font-bold transition-all">
+                        Per Sesi
+                    </button>
+                    <button onclick="updateChartType('bulanan')" id="btn-bulanan" class="chart-toggle-btn flex-1 sm:flex-none px-4 py-2 rounded-xl text-xs font-bold transition-all text-slate-500 hover:text-slate-700">
+                        Bulanan
+                    </button>
+                </div>
+            </div>
+            <div class="relative h-[380px] w-full">
+                <canvas id="developmentChart"></canvas>
+            </div>
+        </div>
+
+        {{-- Queue Section --}}
+        <div class="bg-white rounded-[2.5rem] p-8 shadow-sm border border-slate-100 flex flex-col">
+            <div class="flex items-center justify-between mb-8">
+                <h2 class="text-xl font-extrabold text-slate-800 tracking-tight">Antrean Hari Ini</h2>
+                <span class="bg-indigo-50 text-indigo-600 text-[10px] font-black px-2 py-1 rounded-lg uppercase">{{ count($jadwalHariIni) }} Sesi</span>
+            </div>
+
+            <div class="space-y-4 flex-1 overflow-y-auto pr-2 custom-scrollbar" style="max-height: 400px;">
+                @forelse($jadwalHariIni as $j)
+                <div class="group relative bg-slate-50 hover:bg-white border border-transparent hover:border-indigo-100 p-4 rounded-[1.5rem] transition-all duration-300 hover:shadow-lg hover:shadow-indigo-500/5">
+                    <div class="flex justify-between items-center">
+                        <div class="flex items-center gap-4">
+                            <div class="relative">
+                                <div class="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center font-bold text-white shadow-md">
+                                    {{ substr($j->siswa->nama_siswa, 0, 1) }}
+                                </div>
+                                <div class="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-500 border-2 border-white rounded-full"></div>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-slate-800 text-sm group-hover:text-indigo-600 transition-colors">{{ $j->siswa->nama_siswa }}</h4>
+                                <div class="flex flex-col gap-0.5 mt-1">
+                                    <span class="text-[11px] text-slate-500 flex items-center gap-1">
+                                        <i class="far fa-clock text-indigo-400"></i> {{ $j->jam_mulai }} WIB
+                                    </span>
+                                    <span class="text-[11px] text-slate-500 font-medium">
+                                        {{ $j->jenis_terapi }}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex flex-col items-end gap-2">
+                            <span class="text-[9px] font-black uppercase tracking-tighter bg-white border border-slate-200 px-2 py-1 rounded-lg text-slate-600">
+                                {{ $j->ruang_terapi ?? 'R. Umum' }}
+                            </span>
+                            <button class="opacity-0 group-hover:opacity-100 transition-opacity p-1.5 bg-indigo-50 text-indigo-600 rounded-lg hover:bg-indigo-600 hover:text-white">
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                @empty
+                <div class="flex flex-col items-center justify-center py-20 text-center">
+                    <div class="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mb-4">
+                        <i class="fas fa-calendar-day text-slate-200 text-3xl"></i>
+                    </div>
+                    <p class="text-slate-400 font-medium text-sm italic">Jadwal masih kosong</p>
+                </div>
+                @endforelse
+            </div>
+
+            <div class="mt-6">
+                <a href="{{ url('admin/jadwal-terapi') }}"
+                   class="group/btn w-full py-4 bg-slate-900 hover:bg-indigo-600 text-white text-xs font-bold rounded-2xl transition-all duration-300 flex items-center justify-center gap-3 shadow-lg shadow-slate-200 hover:shadow-indigo-200 overflow-hidden relative">
+                    {{-- Efek Cahaya Running (Glass Effect) --}}
+                    <div class="absolute inset-0 w-1/2 h-full bg-gradient-to-r from-transparent via-white/10 to-transparent -skew-x-[20deg] group-hover/btn:animate-[shimmer_1.5s_infinite] -left-full"></div>
+
+                    <span class="relative z-10">Lihat Semua Jadwal</span>
+                    <i class="fas fa-arrow-right text-[10px] group-hover/btn:translate-x-1 transition-transform relative z-10"></i>
+                </a>
+            </div>
+        </div>
     </div>
 </div>
 
 <style>
-    @keyframes float {
-        0%, 100% { transform: translateY(0px); }
-        50% { transform: translateY(-20px); }
+    @keyframes shimmer {
+        100% { left: 150%; }
     }
-    .animate-float { animation: float 6s ease-in-out infinite; }
+    .custom-scrollbar::-webkit-scrollbar { width: 5px; }
+    .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+    .custom-scrollbar::-webkit-scrollbar-thumb { background: #E2E8F0; border-radius: 10px; }
+    .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #CBD5E1; }
+
+    .chart-toggle-btn.active {
+        background-color: white;
+        color: #4f46e5;
+        box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+    }
 </style>
 
-@push('scripts')
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     const ctx = document.getElementById('developmentChart').getContext('2d');
-    
-    // Gradient Background
-    const gradient = ctx.createLinearGradient(0, 0, 0, 300);
-    gradient.addColorStop(0, 'rgba(37, 99, 235, 0.2)');
-    gradient.addColorStop(1, 'rgba(37, 99, 235, 0)');
+    let currentChart;
 
-    new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: {!! json_encode($chart_labels) !!},
-            datasets: [{
-                label: 'Tingkat Perkembangan (%)',
-                data: {!! json_encode($chart_data) !!},
-                borderColor: '#2563eb',
-                borderWidth: 4,
-                fill: true,
-                backgroundColor: gradient,
-                tension: 0.4, // Membuat garis melengkung premium
-                pointBackgroundColor: '#fff',
-                pointBorderColor: '#2563eb',
-                pointBorderWidth: 2,
-                pointRadius: 6,
-                pointHoverRadius: 8
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            plugins: {
-                legend: { display: false }
+    // Ambil data asli dari Controller
+    const dataSesi = {
+        labels: {!! json_encode($chartSesiLabels) !!},
+        values: {!! json_encode($chartSesiValues) !!}
+    };
+
+    const dataBulanan = {
+        labels: {!! json_encode($chartBulanLabels) !!},
+        values: {!! json_encode($chartBulanValues) !!}
+    };
+
+    function initChart(labels, data) {
+        if (currentChart) currentChart.destroy();
+
+        let gradient = ctx.createLinearGradient(0, 0, 0, 400);
+        gradient.addColorStop(0, 'rgba(79, 70, 229, 0.25)');
+        gradient.addColorStop(1, 'rgba(79, 70, 229, 0)');
+
+        currentChart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Skor Progres',
+                    data: data,
+                    borderColor: '#4f46e5',
+                    borderWidth: 4,
+                    pointBackgroundColor: '#ffffff',
+                    pointBorderColor: '#4f46e5',
+                    pointBorderWidth: 3,
+                    pointRadius: 5,
+                    pointHoverRadius: 8,
+                    fill: true,
+                    backgroundColor: gradient,
+                    tension: 0.4
+                }]
             },
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    grid: { display: false },
-                    ticks: { font: { weight: '600' } }
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: '#1e293b',
+                        padding: 15,
+                        cornerRadius: 12,
+                        displayColors: false,
+                        callbacks: {
+                            label: function(context) {
+                                return `Skor: ${context.parsed.y}`;
+                            }
+                        }
+                    }
                 },
-                x: {
-                    grid: { display: false },
-                    ticks: { font: { weight: '600' } }
+                scales: {
+                    y: {
+                        grid: { color: '#f1f5f9', drawBorder: false },
+                        ticks: { color: '#94a3b8', font: { weight: '600' } },
+                        min: 0,
+                        max: 100
+                    },
+                    x: {
+                        grid: { display: false },
+                        ticks: { color: '#94a3b8', font: { weight: '600' } }
+                    }
                 }
             }
+        });
+    }
+
+    function updateChartType(type) {
+        document.querySelectorAll('.chart-toggle-btn').forEach(btn => {
+            btn.classList.remove('active');
+            btn.classList.add('text-slate-500');
+        });
+
+        const activeBtn = document.getElementById('btn-' + type);
+        activeBtn.classList.add('active');
+        activeBtn.classList.remove('text-slate-500');
+
+        if(type === 'sesi') {
+            initChart(dataSesi.labels, dataSesi.values);
+        } else {
+            initChart(dataBulanan.labels, dataBulanan.values);
         }
-    });
+    }
+
+    // Jalankan pertama kali dengan data sesi
+    initChart(dataSesi.labels, dataSesi.values);
 </script>
-@endpush
 @endsection

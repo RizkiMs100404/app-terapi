@@ -59,9 +59,9 @@ class AuthController extends Controller
 
         // 7. Jika lolos semua, lakukan Login resmi
         if (Auth::loginUsingId($user->id, $request->filled('remember'))) {
-            RateLimiter::clear($throttleKey);
-            $request->session()->regenerate();
-            
+        RateLimiter::clear($throttleKey);
+        $request->session()->regenerate();
+
             return $this->redirectByRole(Auth::user()->role);
         }
 
@@ -119,7 +119,7 @@ class AuthController extends Controller
         );
 
         $user = User::where('email', $email)->first();
-        
+
         try {
             $user->notify(new SendOtpResetPassword($otp));
             RateLimiter::hit($otpKey, 120); // Lock 2 menit

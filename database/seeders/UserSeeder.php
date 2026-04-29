@@ -16,28 +16,28 @@ class UserSeeder extends Seeder
     {
         // 1. Buat Default Admin
         User::create([
-            'name'      => 'Administrator SLB',
+            'name'      => 'Administrator',
             'username'  => 'adminSLB',
-            'email'     => 'rizki.mustofa100404@gmail.com',
+            'email'     => 'aprilianihilda2@gmail.com',
             'password'  => Hash::make('admin123'),
             'role'      => 'admin',
         ]);
 
         // 2. Buat Default Guru
         User::create([
-            'name'      => 'Guru Terapi',
-            'username'  => 'guru',
-            'email'     => 'guru@gmail.com',
-            'password'  => Hash::make('password123'),
+            'name'      => 'Indah Kusmawati',
+            'username'  => 'indah',
+            'email'     => 'indah@gmail.com',
+            'password'  => Hash::make('indah123'),
             'role'      => 'guru',
         ]);
 
         // 3. Buat Default Orangtua
         User::create([
-            'name'      => 'Wali Murid',
-            'username'  => 'orangtua',
-            'email'     => 'orangtua@gmail.com',
-            'password'  => Hash::make('password123'),
+            'name'      => 'Anton Budiman',
+            'username'  => 'anton',
+            'email'     => 'anton@gmail.com',
+            'password'  => Hash::make('anton123'),
             'role'      => 'orangtua',
         ]);
     }
