@@ -74,7 +74,7 @@
 
     <div class="footer">
         <p>Garut, {{ date('d F Y') }}</p>
-        <p>Guru Terapis,</p>
+        <p>Kepala Sekolah,</p>
         <div class="signature">
             <p>Kepala Sekolah SLBN B Garut</p>
         </div>

@@ -84,9 +84,14 @@ Route::middleware(['auth', 'role:guru'])->prefix('guru')->name('guru.')->group(f
     Route::get('/rekam-terapi/edit/{id}', [App\Http\Controllers\Guru\RekamTerapiController::class, 'edit'])->name('rekam-terapi.edit');
     Route::put('/rekam-terapi/update/{id}', [App\Http\Controllers\Guru\RekamTerapiController::class, 'update'])->name('rekam-terapi.update');
 
-    // --- MENU BARU: Siswa Terapi ---
+    // --- Siswa Terapi ---
     Route::get('/siswa-terapi', [App\Http\Controllers\Guru\SiswaTerapiController::class, 'index'])->name('siswa-terapi.index');
     Route::get('/siswa-terapi/{id}', [App\Http\Controllers\Guru\SiswaTerapiController::class, 'show'])->name('siswa-terapi.show');
+
+    // Profile Routes
+    Route::get('/profile', [App\Http\Controllers\Guru\ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [App\Http\Controllers\Guru\ProfileController::class, 'update'])->name('profile.update');
+    Route::put('/profile/password', [App\Http\Controllers\Guru\ProfileController::class, 'updatePassword'])->name('profile.password');
 
 });
 

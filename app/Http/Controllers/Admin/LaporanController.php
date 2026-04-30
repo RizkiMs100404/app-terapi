@@ -152,8 +152,8 @@ class LaporanController extends Controller
     // 5. TANDA TANGAN (Footer)
     $footerRow = $row + 2;
     $sheet->setCellValue('E' . $footerRow, 'Garut, ' . date('d F Y'));
-    $sheet->setCellValue('E' . ($footerRow + 1), 'Guru Terapis,');
-    $sheet->setCellValue('E' . ($footerRow + 4), \Auth::user()->name);
+    $sheet->setCellValue('E' . ($footerRow + 1), 'Kepala Sekolah,');
+    $sheet->setCellValue('E' . ($footerRow + 4), 'Kepala Sekolah SLBN B Garut');
     $sheet->getStyle('E' . ($footerRow + 4))->getFont()->setBold(true);
     $sheet->getStyle('E' . ($footerRow + 4))->getBorders()->getTop()->setBorderStyle(Border::BORDER_THIN);
 

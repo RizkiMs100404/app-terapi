@@ -65,17 +65,18 @@
             </div>
         </div>
 
-        {{-- Pro Card --}}
-        <div class="bg-gradient-to-br from-indigo-600 to-violet-700 rounded-[2rem] p-7 shadow-lg shadow-indigo-200 relative overflow-hidden group">
-            <div class="absolute right-[-10%] top-[-10%] opacity-10 w-32 h-32 rotate-12 group-hover:rotate-45 transition-transform duration-700">
-                <svg fill="white" viewBox="0 0 24 24"><path d="M12 2C6.5 2 2 6.5 2 12s4.5 10 10 10 10-4.5 10-10S17.5 2 12 2zm0 18c-4.4 0-8-3.6-8-8s3.6-8 8-8 8 3.6 8 8-3.6 8-8 8zm.5-13H11v6l5.2 3.2.8-1.3-4.5-2.7V7z"/></svg>
-            </div>
-            <p class="text-indigo-100 font-medium mb-1">Sesi Terakhir</p>
-            <h3 class="text-xl font-bold text-white mt-2 leading-tight">Pantau Aktivitas <br>Secara Presisi</h3>
-            <div class="mt-4 inline-flex items-center gap-2 bg-white/20 backdrop-blur-md px-3 py-1.5 rounded-xl text-white text-xs font-bold">
-                <i class="fas fa-shield-check"></i> Data Terproteksi
-            </div>
+       {{-- Card Stat 4 (Sesi Menunggu) --}}
+<div class="group bg-white rounded-[2rem] p-7 shadow-sm border border-slate-100 relative overflow-hidden hover:shadow-xl hover:-translate-y-1 transition-all duration-300">
+    <div class="absolute -right-4 -top-4 w-24 h-24 bg-amber-50 rounded-full group-hover:scale-150 transition-transform duration-500"></div>
+    <div class="relative z-10">
+        <p class="text-slate-500 font-medium mb-1">Sesi Belom Terlaksana</p>
+        <h3 class="text-4xl font-black text-slate-800">{{ $sesiBelumTerlaksana }}</h3>
+        <div class="mt-4 flex items-center text-amber-600 text-[11px] font-bold uppercase tracking-wider">
+            <span class="bg-amber-100 px-2 py-1 rounded-lg mr-2">Antrean</span>
+            <span>Jadwal Hari Ini</span>
         </div>
+    </div>
+</div>
     </div>
 
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -83,7 +84,7 @@
         <div class="lg:col-span-2 bg-white rounded-[2.5rem] p-8 shadow-sm border border-slate-100">
             <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-8 gap-4">
                 <div>
-                    <h2 class="text-xl font-extrabold text-slate-800 tracking-tight">Metrik Kemajuan Siswa</h2>
+                    <h2 class="text-xl font-extrabold text-slate-800 tracking-tight">Grafik Perkembangan Siswa</h2>
                     <p class="text-sm text-slate-400 font-medium">Analisis efektivitas terapi periode ini</p>
                 </div>
                 {{-- Toggle Filter --}}
@@ -104,7 +105,7 @@
         {{-- Queue Section --}}
         <div class="bg-white rounded-[2.5rem] p-8 shadow-sm border border-slate-100 flex flex-col">
             <div class="flex items-center justify-between mb-8">
-                <h2 class="text-xl font-extrabold text-slate-800 tracking-tight">Antrean Hari Ini</h2>
+                <h2 class="text-xl font-extrabold text-slate-800 tracking-tight">Jadwal Hari Ini</h2>
                 <span class="bg-indigo-50 text-indigo-600 text-[10px] font-black px-2 py-1 rounded-lg uppercase">{{ count($jadwalHariIni) }} Sesi</span>
             </div>
 
@@ -165,6 +166,7 @@
 </div>
 
 <style>
+    /* Animasi shimmer dan scrollbar tetap dipertahankan */
     @keyframes shimmer {
         100% { left: 150%; }
     }
@@ -173,10 +175,14 @@
     .custom-scrollbar::-webkit-scrollbar-thumb { background: #E2E8F0; border-radius: 10px; }
     .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #CBD5E1; }
 
+    /* Toggle Button Theme: Indigo */
+    .chart-toggle-btn {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
     .chart-toggle-btn.active {
-        background-color: white;
-        color: #4f46e5;
-        box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        background-color: white !important;
+        color: #4f46e5 !important; /* Indigo 600 */
+        box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.1), 0 2px 4px -1px rgba(79, 70, 229, 0.06) !important;
     }
 </style>
 
@@ -185,7 +191,7 @@
     const ctx = document.getElementById('developmentChart').getContext('2d');
     let currentChart;
 
-    // Ambil data asli dari Controller
+    // Data dari Controller
     const dataSesi = {
         labels: {!! json_encode($chartSesiLabels) !!},
         values: {!! json_encode($chartSesiValues) !!}
@@ -199,8 +205,9 @@
     function initChart(labels, data) {
         if (currentChart) currentChart.destroy();
 
+        // Gradient Indigo Premium
         let gradient = ctx.createLinearGradient(0, 0, 0, 400);
-        gradient.addColorStop(0, 'rgba(79, 70, 229, 0.25)');
+        gradient.addColorStop(0, 'rgba(79, 70, 229, 0.2)'); // Indigo 600
         gradient.addColorStop(1, 'rgba(79, 70, 229, 0)');
 
         currentChart = new Chart(ctx, {
@@ -208,47 +215,74 @@
             data: {
                 labels: labels,
                 datasets: [{
-                    label: 'Skor Progres',
+                    label: 'Skor Rata-rata',
                     data: data,
-                    borderColor: '#4f46e5',
-                    borderWidth: 4,
-                    pointBackgroundColor: '#ffffff',
-                    pointBorderColor: '#4f46e5',
-                    pointBorderWidth: 3,
-                    pointRadius: 5,
-                    pointHoverRadius: 8,
+                    borderColor: '#4f46e5', // Indigo 600
+                    borderWidth: 3,
                     fill: true,
                     backgroundColor: gradient,
-                    tension: 0.4
+                    tension: 0.4,
+                    // Styling Point (Titik)
+                    pointBackgroundColor: '#ffffff',
+                    pointBorderColor: '#4f46e5',
+                    pointBorderWidth: 2,
+                    pointRadius: 4,
+                    pointHoverRadius: 7,
+                    pointHoverBackgroundColor: '#4f46e5',
+                    pointHoverBorderColor: '#ffffff',
+                    pointHoverBorderWidth: 2,
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                interaction: {
+                    intersect: false,
+                    mode: 'index',
+                },
+                animation: {
+                    duration: 800,
+                    easing: 'easeOutQuart'
+                },
                 plugins: {
                     legend: { display: false },
                     tooltip: {
                         backgroundColor: '#1e293b',
-                        padding: 15,
-                        cornerRadius: 12,
+                        padding: 12,
+                        cornerRadius: 8,
+                        titleFont: { size: 13, weight: '700' },
+                        bodyFont: { size: 12 },
                         displayColors: false,
                         callbacks: {
-                            label: function(context) {
-                                return `Skor: ${context.parsed.y}`;
-                            }
+                            label: (context) => ` Skor: ${context.parsed.y}`
                         }
                     }
                 },
                 scales: {
                     y: {
-                        grid: { color: '#f1f5f9', drawBorder: false },
-                        ticks: { color: '#94a3b8', font: { weight: '600' } },
                         min: 0,
-                        max: 100
+                        max: 100,
+                        grid: {
+                            display: true,
+                            color: '#f1f5f9', // Garis horizontal halus
+                            drawBorder: false,
+                        },
+                        ticks: {
+                            stepSize: 20,
+                            color: '#94a3b8',
+                            font: { family: 'Inter', weight: '500' }
+                        }
                     },
                     x: {
-                        grid: { display: false },
-                        ticks: { color: '#94a3b8', font: { weight: '600' } }
+                        grid: {
+                            display: true, // Garis vertikal diaktifkan biar keren
+                            color: '#f8fafc', 
+                            drawBorder: false,
+                        },
+                        ticks: {
+                            color: '#94a3b8',
+                            font: { family: 'Inter', weight: '500' }
+                        }
                     }
                 }
             }
@@ -257,7 +291,7 @@
 
     function updateChartType(type) {
         document.querySelectorAll('.chart-toggle-btn').forEach(btn => {
-            btn.classList.remove('active');
+            btn.classList.remove('active', 'text-indigo-600');
             btn.classList.add('text-slate-500');
         });
 
@@ -272,7 +306,18 @@
         }
     }
 
-    // Jalankan pertama kali dengan data sesi
-    initChart(dataSesi.labels, dataSesi.values);
+    document.addEventListener('DOMContentLoaded', () => {
+        initChart(dataSesi.labels, dataSesi.values);
+    });
 </script>
+
+<style>
+    /* Tambahan agar toggle tombol terlihat lebih "clickable" */
+    .chart-toggle-btn {
+        transition: all 0.3s ease;
+    }
+    .chart-toggle-btn.active {
+        color: #059669 !important; /* Emerald 600 */
+    }
+</style>
 @endsection
