@@ -14,6 +14,7 @@ class JadwalTerapiController extends Controller
 {
     public function index(Request $request)
     {
+        // Memastikan relasi siswa ikut terangkut untuk menampilkan tingkat & kelas
         $query = JadwalTerapi::with(['siswa', 'guru.user', 'tahunAjaran']);
 
         // 1. Mapping Hari Indonesia
@@ -29,7 +30,14 @@ class JadwalTerapiController extends Controller
             });
         }
 
-        // 3. LOGIKA FILTER TANGGAL -> HARI
+        // 3. Filter Berdasarkan Tingkat (New: Request dari Abang)
+        if ($request->filled('tingkat')) {
+            $query->whereHas('siswa', function($q) use ($request) {
+                $q->where('tingkat', $request->tingkat);
+            });
+        }
+
+        // 4. LOGIKA FILTER TANGGAL -> HARI
         $tanggalAktif = null;
         if ($request->filled('tanggal')) {
             $tanggalAktif = $request->tanggal;
@@ -39,23 +47,25 @@ class JadwalTerapiController extends Controller
             // Filter query berdasarkan hari dari tanggal tersebut
             $query->where('hari', $hariDariTanggal);
         }
-        // Filter Berdasarkan Nama Hari Manual (jika masih pakai dropdown hari)
+        // Filter Berdasarkan Nama Hari Manual
         elseif ($request->filled('hari')) {
             $query->where('hari', $request->hari);
         }
 
-        // 4. Sorting & Pagination
+        // 5. Sorting Berdasarkan Urutan Hari & Jam
         $jadwal = $query->orderByRaw("FIELD(hari, 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu')")
                         ->orderBy('jam_mulai', 'asc')
                         ->paginate(9)
-                        ->withQueryString(); // Agar filter tidak hilang saat pindah page
+                        ->withQueryString(); 
 
         return view('admin.jadwal.index', compact('jadwal', 'tanggalAktif'));
     }
 
     public function create()
     {
-        $siswa = Siswa::all();
+        // Mengambil semua siswa untuk dropdown
+        $siswa = Siswa::orderBy('nama_siswa', 'asc')->get();
+        
         // Load relasi user agar nama guru muncul di dropdown
         $guru = GuruTerapis::with('user')->where('status_kerja', 'Aktif')->get();
         $tahunAjaran = TahunAjaran::orderBy('status_aktif', 'desc')->get();
@@ -86,24 +96,30 @@ class JadwalTerapiController extends Controller
     public function edit($id)
     {
         $jadwal = JadwalTerapi::findOrFail($id);
-        $siswa = Siswa::all();
-        // Tetap munculkan guru meskipun status non-aktif jika sudah terlanjur ada di jadwal
+        $siswa = Siswa::orderBy('nama_siswa', 'asc')->get();
+        
+        // Guru tetap muncul meskipun non-aktif untuk keperluan edit data lama
         $guru = GuruTerapis::with('user')->get();
         $tahunAjaran = TahunAjaran::all();
 
-        // Ambil data enum dari Model
         $hari = JadwalTerapi::listHari();
         $pilihanKeahlian = JadwalTerapi::listJenisTerapi();
 
         return view('admin.jadwal.edit', compact('jadwal', 'siswa', 'guru', 'tahunAjaran', 'hari', 'pilihanKeahlian'));
     }
 
+    public function show($id)
+    {
+        $jadwal = JadwalTerapi::with(['siswa', 'guru.user', 'tahunAjaran'])->findOrFail($id);
+        return view('admin.jadwal.show', compact('jadwal'));
+    }
+
     public function update(Request $request, $id)
     {
         $request->validate([
-            'id_siswa' => 'required',
-            'id_guru' => 'required',
-            'id_tahun_ajaran' => 'required',
+            'id_siswa' => 'required|exists:siswa,id',
+            'id_guru' => 'required|exists:guru_terapis,id',
+            'id_tahun_ajaran' => 'required|exists:tahun_ajaran,id',
             'hari' => 'required',
             'jam_mulai' => 'required',
             'jam_selesai' => 'required',

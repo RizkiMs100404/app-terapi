@@ -16,44 +16,89 @@
             </div>
         </div>
 
-        <form action="{{ route('siswa.store') }}" method="POST" id="formSiswa">
+        {{-- Perhatikan penambahan enctype untuk upload file --}}
+        <form action="{{ route('siswa.store') }}" method="POST" id="formSiswa" enctype="multipart/form-data">
             @csrf
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
 
                 {{-- Form Kiri (Data Utama) --}}
                 <div class="lg:col-span-2 space-y-8">
                     {{-- Profil Identitas --}}
-                    <div class="bg-white p-8 rounded-[2.5rem] border border-slate-200 shadow-xl shadow-slate-200/50">
-                        <div class="flex items-center gap-3 mb-8">
-                            <div class="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-indigo-200">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
-                            </div>
-                            <h3 class="text-xl font-black text-slate-800 uppercase tracking-tight">Profil Identitas</h3>
-                        </div>
+<div class="bg-white p-8 rounded-[2.5rem] border border-slate-200 shadow-xl shadow-slate-200/50">
+    <div class="flex items-center gap-3 mb-8">
+        <div class="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center text-white shadow-lg shadow-indigo-200">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path>
+            </svg>
+        </div>
+        <h3 class="text-xl font-black text-slate-800 uppercase tracking-tight">Profil Identitas</h3>
+    </div>
 
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div class="space-y-2">
-                                <label class="text-[11px] font-black text-slate-400 uppercase tracking-[0.1em] ml-1">NIS (Nomor Induk Siswa)</label>
-                                <input type="text" name="nis" value="{{ old('nis') }}" placeholder="Contoh: 2026001" class="w-full bg-slate-50 border-2 border-transparent rounded-2xl px-5 py-4 focus:bg-white focus:border-indigo-500 transition-all outline-none font-bold text-slate-700">
-                                @error('nis') <span class="text-rose-500 text-xs font-bold ml-1">{{ $message }}</span> @enderror
-                            </div>
-                            <div class="space-y-2">
-                                <label class="text-[11px] font-black text-slate-400 uppercase tracking-[0.1em] ml-1">Nama Lengkap Siswa</label>
-                                <input type="text" name="nama_siswa" value="{{ old('nama_siswa') }}" placeholder="Masukkan nama lengkap" class="w-full bg-slate-50 border-2 border-transparent rounded-2xl px-5 py-4 focus:bg-white focus:border-indigo-500 transition-all outline-none font-bold text-slate-700">
-                            </div>
-                            <div class="space-y-2">
-                                <label class="text-[11px] font-black text-slate-400 uppercase tracking-[0.1em] ml-1">Jenis Kelamin</label>
-                                <select name="jenis_kelamin" class="w-full bg-slate-50 border-2 border-transparent rounded-2xl px-5 py-4 focus:bg-white focus:border-indigo-500 transition-all outline-none font-bold text-slate-700">
-                                    <option value="L">Laki-laki</option>
-                                    <option value="P">Perempuan</option>
-                                </select>
-                            </div>
-                            <div class="space-y-2">
-                                <label class="text-[11px] font-black text-slate-400 uppercase tracking-[0.1em] ml-1">Tanggal Lahir</label>
-                                <input type="date" name="tanggal_lahir" value="{{ old('tanggal_lahir') }}" class="w-full bg-slate-50 border-2 border-transparent rounded-2xl px-5 py-4 focus:bg-white focus:border-indigo-500 transition-all outline-none font-bold text-slate-700">
-                            </div>
-                        </div>
-                    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {{-- Foto Preview Section --}}
+        <div class="md:col-span-2 flex items-center gap-6 mb-4 p-4 bg-slate-50 rounded-3xl border-2 border-dashed border-slate-200">
+            <div class="relative w-24 h-24 bg-white rounded-2xl overflow-hidden border-2 border-white shadow-md">
+                <img id="preview" src="https://ui-avatars.com/api/?name=Foto+Siswa&background=f1f5f9&color=cbd5e1" class="w-full h-full object-cover">
+            </div>
+            <div class="flex-1 space-y-2">
+                <label class="text-[11px] font-black text-slate-400 uppercase tracking-[0.1em] ml-1">Pas Foto Siswa</label>
+                <input type="file" name="foto" id="fotoInput" accept="image/*" class="w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-black file:bg-indigo-50 file:text-indigo-600 hover:file:bg-indigo-100 transition-all">
+                <p class="text-[10px] text-slate-400 italic font-medium">*Format: JPG, PNG. Maksimal 2MB.</p>
+                @error('foto') <span class="text-rose-500 text-xs font-bold ml-1">{{ $message }}</span> @enderror
+            </div>
+        </div>
+
+        {{-- NIS --}}
+        <div class="space-y-2">
+            <label class="text-[11px] font-black text-slate-400 uppercase tracking-[0.1em] ml-1">NIS (Nomor Induk Siswa)</label>
+            <input type="text" name="nis" value="{{ old('nis') }}" placeholder="Contoh: 2026001" class="w-full bg-slate-50 border-2 border-transparent rounded-2xl px-5 py-4 focus:bg-white focus:border-indigo-500 transition-all outline-none font-bold text-slate-700">
+            @error('nis') <span class="text-rose-500 text-xs font-bold ml-1">{{ $message }}</span> @enderror
+        </div>
+
+        {{-- Nama Siswa --}}
+        <div class="space-y-2">
+            <label class="text-[11px] font-black text-slate-400 uppercase tracking-[0.1em] ml-1">Nama Lengkap Siswa</label>
+            <input type="text" name="nama_siswa" value="{{ old('nama_siswa') }}" placeholder="Masukkan nama lengkap" class="w-full bg-slate-50 border-2 border-transparent rounded-2xl px-5 py-4 focus:bg-white focus:border-indigo-500 transition-all outline-none font-bold text-slate-700">
+            @error('nama_siswa') <span class="text-rose-500 text-xs font-bold ml-1">{{ $message }}</span> @enderror
+        </div>
+
+        {{-- Tingkat --}}
+        <div class="space-y-2">
+            <label class="text-[11px] font-black text-slate-400 uppercase tracking-[0.1em] ml-1">Tingkat Sekolah</label>
+            <select name="tingkat" class="w-full bg-slate-50 border-2 border-transparent rounded-2xl px-5 py-4 focus:bg-white focus:border-indigo-500 transition-all outline-none font-bold text-slate-700">
+                <option value="" disabled selected>Pilih Tingkat</option>
+                <option value="SDLB" {{ old('tingkat') == 'SDLB' ? 'selected' : '' }}>SDLB</option>
+                <option value="SMPLB" {{ old('tingkat') == 'SMPLB' ? 'selected' : '' }}>SMPLB</option>
+                <option value="SMALB" {{ old('tingkat') == 'SMALB' ? 'selected' : '' }}>SMALB</option>
+            </select>
+            @error('tingkat') <span class="text-rose-500 text-xs font-bold ml-1">{{ $message }}</span> @enderror
+        </div>
+
+        {{-- Kelas --}}
+        <div class="space-y-2">
+            <label class="text-[11px] font-black text-slate-400 uppercase tracking-[0.1em] ml-1">Kelas</label>
+            <input type="text" name="kelas" value="{{ old('kelas') }}" placeholder="Contoh: 1-A atau VII-B" class="w-full bg-slate-50 border-2 border-transparent rounded-2xl px-5 py-4 focus:bg-white focus:border-indigo-500 transition-all outline-none font-bold text-slate-700">
+            @error('kelas') <span class="text-rose-500 text-xs font-bold ml-1">{{ $message }}</span> @enderror
+        </div>
+
+        {{-- Jenis Kelamin --}}
+        <div class="space-y-2">
+            <label class="text-[11px] font-black text-slate-400 uppercase tracking-[0.1em] ml-1">Jenis Kelamin</label>
+            <select name="jenis_kelamin" class="w-full bg-slate-50 border-2 border-transparent rounded-2xl px-5 py-4 focus:bg-white focus:border-indigo-500 transition-all outline-none font-bold text-slate-700">
+                <option value="L" {{ old('jenis_kelamin') == 'L' ? 'selected' : '' }}>Laki-laki</option>
+                <option value="P" {{ old('jenis_kelamin') == 'P' ? 'selected' : '' }}>Perempuan</option>
+            </select>
+            @error('jenis_kelamin') <span class="text-rose-500 text-xs font-bold ml-1">{{ $message }}</span> @enderror
+        </div>
+
+        {{-- Tanggal Lahir --}}
+        <div class="space-y-2">
+            <label class="text-[11px] font-black text-slate-400 uppercase tracking-[0.1em] ml-1">Tanggal Lahir</label>
+            <input type="date" name="tanggal_lahir" value="{{ old('tanggal_lahir') }}" class="w-full bg-slate-50 border-2 border-transparent rounded-2xl px-5 py-4 focus:bg-white focus:border-indigo-500 transition-all outline-none font-bold text-slate-700">
+            @error('tanggal_lahir') <span class="text-rose-500 text-xs font-bold ml-1">{{ $message }}</span> @enderror
+        </div>
+    </div>
+</div>
 
                     {{-- Domisili --}}
                     <div class="bg-white p-8 rounded-[2.5rem] border border-slate-200 shadow-xl shadow-slate-200/50">
@@ -108,15 +153,16 @@
                                 <select name="id_orangtua" class="w-full bg-white/5 border-2 border-white/10 rounded-2xl px-5 py-4 text-white focus:border-indigo-500 outline-none font-bold">
                                     <option value="" class="text-slate-900">-- Cari Nama Wali --</option>
                                     @foreach($orangtua as $ortu)
-                                        <option value="{{ $ortu->id }}" class="text-slate-900">{{ $ortu->user->name }}</option>
+                                        <option value="{{ $ortu->id }}" {{ old('id_orangtua') == $ortu->id ? 'selected' : '' }} class="text-slate-900">{{ $ortu->user->name }}</option>
                                     @endforeach
                                 </select>
+                                @error('id_orangtua') <span class="text-rose-400 text-[10px] font-bold">{{ $message }}</span> @enderror
                             </div>
                             <div>
                                 <label class="text-[10px] font-black text-slate-500 uppercase tracking-widest block mb-2">Tahun Ajaran</label>
                                 <select name="id_tahun_ajaran" class="w-full bg-white/5 border-2 border-white/10 rounded-2xl px-5 py-4 text-white focus:border-indigo-500 outline-none font-bold">
                                     @foreach($tahunAjaran as $ta)
-                                        <option value="{{ $ta->id }}" class="text-slate-900">{{ $ta->rentang_tahun }} - {{ $ta->semester }}</option>
+                                        <option value="{{ $ta->id }}" {{ old('id_tahun_ajaran') == $ta->id ? 'selected' : '' }} class="text-slate-900">{{ $ta->rentang_tahun }} - {{ $ta->semester }}</option>
                                     @endforeach
                                 </select>
                             </div>
@@ -145,29 +191,38 @@
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // --- PREVIEW FOTO ---
+    const fotoInput = document.getElementById('fotoInput');
+    const preview = document.getElementById('preview');
+
+    fotoInput.onchange = evt => {
+        const [file] = fotoInput.files;
+        if (file) {
+            preview.src = URL.createObjectURL(file);
+        }
+    }
+
+    // --- WILAYAH API ---
     const p = document.getElementById('provinsi'),
           k = document.getElementById('kabupaten'),
           kc = document.getElementById('kecamatan'),
           kl = document.getElementById('kelurahan');
 
-    // Load Provinces
     fetch('https://www.emsifa.com/api-wilayah-indonesia/api/provinces.json')
         .then(r => r.json())
         .then(d => {
             p.innerHTML = '<option value="">Pilih Provinsi</option>';
             d.forEach(v => {
                 let opt = new Option(v.name, v.name);
-                opt.setAttribute('data-id', v.id); // Simpan ID di atribut data
+                opt.setAttribute('data-id', v.id);
                 p.add(opt);
             });
         });
 
-    // Province change -> Load Regencies
     p.onchange = () => {
         const id = p.options[p.selectedIndex].getAttribute('data-id');
         k.innerHTML = '<option>Loading...</option>';
         kc.innerHTML = ''; kl.innerHTML = '';
-
         fetch(`https://www.emsifa.com/api-wilayah-indonesia/api/regencies/${id}.json`)
             .then(r => r.json())
             .then(d => {
@@ -180,12 +235,10 @@ document.addEventListener('DOMContentLoaded', function() {
             });
     };
 
-    // Regency change -> Load Districts
     k.onchange = () => {
         const id = k.options[k.selectedIndex].getAttribute('data-id');
         kc.innerHTML = '<option>Loading...</option>';
         kl.innerHTML = '';
-
         fetch(`https://www.emsifa.com/api-wilayah-indonesia/api/districts/${id}.json`)
             .then(r => r.json())
             .then(d => {
@@ -198,11 +251,9 @@ document.addEventListener('DOMContentLoaded', function() {
             });
     };
 
-    // District change -> Load Villages
     kc.onchange = () => {
         const id = kc.options[kc.selectedIndex].getAttribute('data-id');
         kl.innerHTML = '<option>Loading...</option>';
-
         fetch(`https://www.emsifa.com/api-wilayah-indonesia/api/villages/${id}.json`)
             .then(r => r.json())
             .then(d => {

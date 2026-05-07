@@ -28,7 +28,7 @@ class AuthController extends Controller
             'password.min' => 'Password minimal 6 karakter.',
         ]);
 
-        // 2. Proteksi Brute Force (Max 5x coba dalam 1 menit)
+        // 2. Proteksi Brute Force
         $throttleKey = 'login:' . $request->ip();
         if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
             $seconds = RateLimiter::availableIn($throttleKey);
@@ -61,6 +61,13 @@ class AuthController extends Controller
         if (Auth::loginUsingId($user->id, $request->filled('remember'))) {
         RateLimiter::clear($throttleKey);
         $request->session()->regenerate();
+
+        if ($user->role === 'orangtua') {
+                $ortu = $user->profilOrangtua()->with('siswa')->first();
+                if ($ortu && $ortu->siswa->isNotEmpty()) {
+                    session(['selected_anak_id' => $ortu->siswa->first()->id]);
+                }
+            }
 
             return $this->redirectByRole(Auth::user()->role);
         }

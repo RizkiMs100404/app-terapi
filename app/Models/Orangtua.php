@@ -17,5 +17,5 @@ class Orangtua extends Model
 
     public function user() { return $this->belongsTo(User::class, 'id_user'); }
     public function tahunAjaran() { return $this->belongsTo(TahunAjaran::class, 'id_tahun_ajaran'); }
-    public function anak() { return $this->hasMany(Siswa::class, 'id_orangtua'); }
+    public function siswa() { return $this->hasMany(Siswa::class, 'id_orangtua'); }
 }

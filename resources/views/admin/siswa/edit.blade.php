@@ -26,7 +26,7 @@
             </div>
         </div>
 
-        <form action="{{ route('siswa.update', $siswa->id) }}" method="POST" id="formEditSiswa">
+        <form action="{{ route('siswa.update', $siswa->id) }}" method="POST" id="formEditSiswa" enctype="multipart/form-data">
             @csrf
             @method('PUT') {{-- Wajib untuk Update --}}
 
@@ -56,6 +56,23 @@
                                 <label class="text-[11px] font-black text-slate-400 uppercase tracking-[0.1em] ml-1">Nama Lengkap Siswa</label>
                                 <input type="text" name="nama_siswa" value="{{ old('nama_siswa', $siswa->nama_siswa) }}" required placeholder="Masukkan nama lengkap" class="w-full bg-slate-50 border-2 border-transparent rounded-2xl px-5 py-4 focus:bg-white focus:border-indigo-500 transition-all outline-none font-bold text-slate-700">
                                 @error('nama_siswa') <span class="text-rose-500 text-xs font-bold ml-1">{{ $message }}</span> @enderror
+                            </div>
+                            {{-- Tingkat (Update Baru) --}}
+                            <div class="space-y-2">
+                                <label class="text-[11px] font-black text-slate-400 uppercase tracking-[0.1em] ml-1">Tingkat Sekolah</label>
+                                <select name="tingkat" required class="w-full bg-slate-50 border-2 border-transparent rounded-2xl px-5 py-4 focus:bg-white focus:border-indigo-500 transition-all outline-none font-bold text-slate-700 cursor-pointer">
+                                    <option value="SDLB" {{ old('tingkat', $siswa->tingkat) == 'SDLB' ? 'selected' : '' }}>SDLB</option>
+                                    <option value="SMPLB" {{ old('tingkat', $siswa->tingkat) == 'SMPLB' ? 'selected' : '' }}>SMPLB</option>
+                                    <option value="SMALB" {{ old('tingkat', $siswa->tingkat) == 'SMALB' ? 'selected' : '' }}>SMALB</option>
+                                </select>
+                                @error('tingkat') <span class="text-rose-500 text-xs font-bold ml-1">{{ $message }}</span> @enderror
+                            </div>
+
+                            {{-- Kelas (Update Baru) --}}
+                            <div class="space-y-2">
+                                <label class="text-[11px] font-black text-slate-400 uppercase tracking-[0.1em] ml-1">Kelas</label>
+                                <input type="text" name="kelas" value="{{ old('kelas', $siswa->kelas) }}" required placeholder="Contoh: 1-A atau VII-B" class="w-full bg-slate-50 border-2 border-transparent rounded-2xl px-5 py-4 focus:bg-white focus:border-indigo-500 transition-all outline-none font-bold text-slate-700">
+                                @error('kelas') <span class="text-rose-500 text-xs font-bold ml-1">{{ $message }}</span> @enderror
                             </div>
                             <div class="space-y-2">
                                 <label class="text-[11px] font-black text-slate-400 uppercase tracking-[0.1em] ml-1">Jenis Kelamin</label>
@@ -125,6 +142,49 @@
 
                 {{-- Sidebar Kanan --}}
                 <div class="space-y-8">
+                    {{-- Card Foto Profil --}}
+                        <div class="bg-white p-8 rounded-[2.5rem] border border-slate-200 shadow-xl shadow-slate-200/50 mb-8 overflow-hidden relative group">
+                            <div class="absolute top-0 left-0 w-full h-2 bg-indigo-600"></div>
+                            
+                            <h3 class="text-sm font-black text-slate-800 uppercase tracking-widest mb-6 flex items-center gap-2">
+                                <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                Foto Profil
+                            </h3>
+
+                            <div class="flex flex-col items-center">
+                                {{-- Preview Container --}}
+                                <div class="relative group/avatar mb-6">
+                                    <div class="w-40 h-40 rounded-[2rem] overflow-hidden ring-4 ring-slate-50 shadow-2xl relative">
+                                        <img id="previewFoto" 
+                            src="{{ $siswa->foto && Storage::exists('public/foto_siswa/' . $siswa->foto) 
+                                    ? asset('storage/foto_siswa/' . $siswa->foto) 
+                                    : 'https://ui-avatars.com/api/?name='.urlencode($siswa->nama_siswa).'&background=4f46e5&color=fff&size=512' }}" 
+                            class="w-full h-full object-cover transition-transform duration-500 group-hover/avatar:scale-110"
+                            alt="Foto Siswa">
+                                        
+                                        {{-- Overlay Label --}}
+                                        <div class="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover/avatar:opacity-100 transition-opacity">
+                                            <span class="text-white text-[10px] font-black uppercase tracking-tighter">Ganti Foto</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {{-- Custom File Input --}}
+                                <div class="w-full">
+                                    <label class="block">
+                                        <span class="sr-only">Pilih Foto</span>
+                                        <input type="file" name="foto" id="inputFoto" accept="image/*"
+                                            class="block w-full text-sm text-slate-500
+                                            file:mr-4 file:py-2 file:px-4
+                                            file:rounded-full file:border-0
+                                            file:text-xs file:font-black
+                                            file:bg-indigo-50 file:text-indigo-700
+                                            hover:file:bg-indigo-100 transition-all cursor-pointer"/>
+                                    </label>
+                                    <p class="text-[9px] text-slate-400 mt-3 text-center italic">Format: JPG, PNG, WEBP (Maks. 2MB)</p>
+                                </div>
+                            </div>
+                        </div>
                     {{-- Data Penunjang (Indigo Night) --}}
                     <div class="bg-slate-900 p-8 rounded-[2.5rem] shadow-2xl text-white relative overflow-hidden group">
                         {{-- Decorative --}}
@@ -261,5 +321,33 @@ document.addEventListener('DOMContentLoaded', function() {
             });
     };
 });
+
+// Letakkan di dalam document.addEventListener('DOMContentLoaded', function() { ... })
+const inputFoto = document.getElementById('inputFoto');
+const previewFoto = document.getElementById('previewFoto');
+
+if(inputFoto) {
+    inputFoto.onchange = evt => {
+        const [file] = inputFoto.files;
+        if (file) {
+            // Validasi Ukuran 2MB
+            if(file.size > 2048 * 1024){
+                Swal.fire({ icon: 'error', title: 'File Terlalu Besar', text: 'Maksimal 2MB ya Bang!' });
+                inputFoto.value = "";
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                previewFoto.src = e.target.result;
+            }
+            reader.readAsDataURL(file);
+            
+            // Efek refresh biar kelihatan ganti
+            previewFoto.classList.add('opacity-50');
+            setTimeout(() => previewFoto.classList.remove('opacity-50'), 300);
+        }
+    };
+}
 </script>
 @endsection

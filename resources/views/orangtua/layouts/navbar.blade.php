@@ -2,6 +2,7 @@
     <div class="px-4 py-2 lg:px-8">
         <div class="flex items-center justify-between h-16">
             
+            <!-- SISI KIRI: LOGO & MOBILE TOGGLE -->
             <div class="flex items-center justify-start flex-1">
                 <button id="toggleSidebarMobile" class="p-2 mr-3 text-indigo-500 rounded-xl lg:hidden hover:bg-indigo-50 dark:hover:bg-gray-800 transition-colors">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -9,7 +10,7 @@
                     </svg>
                 </button>
                 
-                <a href="{{ url('/ortu/dashboard') }}" class="flex items-center gap-4 group">
+                <a href="{{ url('/orangtua/dashboard') }}" class="flex items-center gap-4 group">
                     <div class="relative">
                         <img src="{{ asset('img/logo.png') }}" 
                              class="h-12 w-auto object-contain transform group-hover:rotate-6 transition-all duration-500 ease-out" 
@@ -28,23 +29,10 @@
                 </a>
             </div>
 
-            <div class="hidden md:flex flex-[2] justify-center">
-                <form action="#" method="GET" class="w-full max-w-lg">
-                    <div class="relative group">
-                        <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
-                            <svg class="w-4 h-4 text-gray-400 group-focus-within:text-indigo-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                            </svg>
-                        </div>
-                        <input type="text" name="search" id="topbar-search" 
-                            class="bg-indigo-50/50 border-none text-gray-900 text-sm rounded-2xl focus:ring-4 focus:ring-indigo-500/10 focus:bg-white block w-full pl-11 p-3 dark:bg-gray-800/50 dark:text-white dark:focus:bg-gray-800 transition-all outline-none shadow-sm placeholder:text-gray-400" 
-                            placeholder="Cari jadwal atau hasil terapi anak...">
-                    </div>
-                </form>
-            </div>
-
+            <!-- SISI KANAN: NOTIFIKASI & USER MENU -->
             <div class="flex items-center justify-end flex-1 gap-2 md:gap-4">
                 
+                <!-- NOTIFIKASI -->
                 <button type="button" class="relative p-2.5 text-gray-500 rounded-2xl hover:bg-indigo-50 hover:text-indigo-600 dark:hover:bg-gray-800 transition-all">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
@@ -55,6 +43,7 @@
                     </span>
                 </button>
 
+                <!-- USER DROPDOWN -->
                 <div class="flex items-center">
                     <button type="button" class="flex items-center p-1.5 rounded-2xl hover:bg-indigo-50 dark:hover:bg-gray-800 transition-all group" id="user-menu-button-2" data-dropdown-toggle="dropdown-2">
                         <div class="relative">
@@ -66,9 +55,12 @@
                             <p class="text-xs font-bold text-gray-400 uppercase leading-none mb-1">Orang Tua</p>
                             <p class="text-sm font-black text-gray-900 dark:text-white leading-none capitalize">{{ Auth::user()->name }}</p>
                         </div>
-                        <svg class="w-4 h-4 text-gray-400 hidden md:block" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                        <svg class="w-4 h-4 text-gray-400 hidden md:block" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path d="M19 9l-7 7-7-7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                        </svg>
                     </button>
                     
+                    <!-- DROPDOWN CONTENT (Tanpa Animasi Transition) -->
                     <div class="z-50 hidden my-4 text-base list-none bg-white divide-y divide-gray-100 rounded-[2rem] shadow-2xl border border-indigo-50 dark:bg-gray-900 dark:divide-gray-800 dark:border-gray-800 overflow-hidden" id="dropdown-2" style="min-width: 280px;">
                         <div class="px-6 py-6 bg-gradient-to-br from-indigo-600 to-violet-700">
                             <p class="text-[10px] font-bold text-indigo-200 uppercase tracking-[0.2em] mb-2">Halo, Ayah/Bunda!</p>
@@ -77,12 +69,27 @@
                         </div>
                         
                         <div class="p-3">
-                            <a href="{{ url('/ortu/profile') }}" class="flex items-center gap-4 px-4 py-3 text-sm font-bold text-gray-700 rounded-2xl hover:bg-indigo-50 hover:text-indigo-600 dark:text-gray-300 dark:hover:bg-gray-800 transition-all group">
-                                <div class="p-2 bg-indigo-100 dark:bg-indigo-900/30 rounded-xl group-hover:scale-110 transition-transform">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" stroke-width="2"></path></svg>
+                            <a href="{{ route('orangtua.profile.edit') }}" 
+                            class="flex items-center gap-4 px-4 py-3 text-sm font-bold rounded-2xl transition-all group 
+                            {{ request()->routeIs('orangtua.profile.edit') 
+                                ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-200' 
+                                : 'text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 dark:text-gray-300 dark:hover:bg-gray-800' }}">
+                                
+                                <div class="p-2 {{ request()->routeIs('orangtua.profile.edit') ? 'bg-white/20' : 'bg-indigo-100 dark:bg-indigo-900/30' }} rounded-xl group-hover:scale-110 transition-transform">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                                    </svg>
                                 </div>
                                 Pengaturan Profil
                             </a>
+                            <a href="{{ route('orangtua.siswa.edit') }}" 
+                                class="flex items-center gap-4 px-4 py-3 text-sm font-bold rounded-2xl transition-all group 
+                                {{ request()->routeIs('orangtua.siswa.edit') ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-200' : 'text-gray-700 hover:bg-indigo-50 hover:text-indigo-600' }}">
+                                    <div class="p-2 {{ request()->routeIs('orangtua.siswa.edit') ? 'bg-white/20' : 'bg-indigo-100' }} rounded-xl transition-transform group-hover:scale-110">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" stroke-width="2"></path></svg>
+                                    </div>
+                                    Profil Anak
+                                </a>
                         </div>
 
                         <div class="p-3 bg-gray-50/50 dark:bg-gray-800/50">
@@ -90,7 +97,9 @@
                                 @csrf
                                 <button type="submit" class="flex w-full items-center gap-4 px-4 py-3 text-sm font-bold text-rose-600 rounded-2xl hover:bg-rose-100 dark:text-rose-400 dark:hover:bg-rose-900/20 transition-all group">
                                     <div class="p-2 bg-rose-100/50 dark:bg-rose-900/20 rounded-xl">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" stroke-width="2"></path></svg>
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" stroke-width="2"></path>
+                                        </svg>
                                     </div>
                                     Keluar Dari Sistem
                                 </button>

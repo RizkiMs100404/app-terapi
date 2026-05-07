@@ -24,17 +24,31 @@ class RekamTerapiController extends Controller
             });
         }
 
-        // Filter 2: Status Kehadiran (Hadir, Izin, Sakit, dsb)
+        // Filter 2: Tingkat (SDLB, SMPLB, SMALB)
+        if ($request->filled('tingkat')) {
+            $query->whereHas('jadwal.siswa', function($q) use ($request) {
+                $q->where('tingkat', $request->tingkat);
+            });
+        }
+
+        // Filter 3: Kelas
+        if ($request->filled('kelas')) {
+            $query->whereHas('jadwal.siswa', function($q) use ($request) {
+                $q->where('kelas', $request->kelas);
+            });
+        }
+
+        // Filter 4: Status Kehadiran
         if ($request->filled('status')) {
             $query->where('status_kehadiran', $request->status);
         }
 
-        // Filter 3: Hasil Kemajuan (Enum: Meningkat, Tetap, Menurun, dsb)
+        // Filter 5: Hasil Kemajuan
         if ($request->filled('kemajuan')) {
             $query->where('hasil_kemajuan', $request->kemajuan);
         }
 
-        // Filter 4: Tanggal Pelaksanaan Spesifik
+        // Filter 6: Tanggal Pelaksanaan
         if ($request->filled('tanggal')) {
             $query->whereDate('tanggal_pelaksanaan', $request->tanggal);
         }
@@ -74,7 +88,6 @@ class RekamTerapiController extends Controller
 
             $rekam->delete();
 
-            // Pastikan redirect menggunakan prefix admin. sesuai web.php yang baru
             return redirect()->route('admin.rekam-terapi.index')
                              ->with('success', 'Data rekam terapi dan lampiran berhasil dihapus secara permanen.');
 

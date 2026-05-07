@@ -26,19 +26,6 @@
 </a>
       </div>
 
-      <div class="hidden md:flex flex-[2] justify-center">
-        <form action="#" method="GET" class="w-full max-w-lg">
-          <div class="relative group">
-            <div class="absolute inset-y-0 left-0 flex items-center pl-4 pointer-events-none">
-              <svg class="w-4 h-4 text-gray-400 group-focus-within:text-blue-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-            </div>
-            <input type="text" name="search" id="topbar-search" 
-              class="bg-gray-100/50 border-none text-gray-900 text-sm rounded-2xl focus:ring-2 focus:ring-blue-500/20 focus:bg-white block w-full pl-11 p-3 dark:bg-gray-800/50 dark:text-white dark:focus:bg-gray-800 transition-all outline-none shadow-sm" 
-              placeholder="Cari data siswa, atau terapi...">
-          </div>
-        </form>
-      </div>
-
       <div class="flex items-center justify-end flex-1 gap-2 md:gap-4">
         <button type="button" class="relative p-2.5 text-gray-500 rounded-2xl hover:bg-gray-100 dark:hover:bg-gray-800 transition-all">
           <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path></svg>

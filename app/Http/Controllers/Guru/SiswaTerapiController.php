@@ -80,7 +80,7 @@ class SiswaTerapiController extends Controller
         }
 
         // --- ULTRA PREMIUM ANALYTIC ENGINE ---
-        $rekomendasi = "Wajib 1 Minggu Sekali";
+        $rekomendasi = "Belum Ada Sesi";
 
         if ($historyTerapi->count() > 0) {
             $latest = $historyTerapi->last();

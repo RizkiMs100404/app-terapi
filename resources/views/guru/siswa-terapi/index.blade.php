@@ -11,7 +11,6 @@
                 <p class="text-slate-500 font-medium mt-1">Kelola dan pantau perkembangan setiap siswa secara real-time</p>
             </div>
 
-            {{-- Stats Brief (Optional tapi bikin makin Premium) --}}
             <div class="hidden md:flex gap-4">
                 <div class="px-6 py-3 bg-white rounded-2xl shadow-sm border border-emerald-50">
                     <span class="block text-[10px] font-black text-slate-400 uppercase tracking-widest">Total Siswa</span>
@@ -20,7 +19,7 @@
             </div>
         </div>
 
-        {{-- SEARCH & FILTER ENGINE (GG Version) --}}
+        {{-- SEARCH & FILTER ENGINE --}}
         <form action="{{ route('guru.siswa-terapi.index') }}" method="GET" class="mb-10">
             <div class="bg-white p-4 rounded-[2.5rem] shadow-xl shadow-emerald-900/5 border border-emerald-50 flex flex-col lg:flex-row gap-4 items-end">
 
@@ -74,29 +73,44 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 @foreach($siswa as $s)
                 <div class="group bg-white rounded-[3rem] p-8 shadow-xl shadow-emerald-900/5 border border-white hover:border-emerald-100 hover:shadow-emerald-900/10 transition-all duration-500 relative overflow-hidden">
-                    {{-- Decorative Circle --}}
-                    <div class="absolute -top-12 -right-12 w-24 h-24 bg-emerald-50 rounded-full group-hover:scale-150 transition-transform duration-700 opacity-50"></div>
+                    {{-- Badge Tingkat & Kelas (Floating Top Right) --}}
+                    <div class="absolute top-6 right-6 flex flex-col items-end gap-1">
+                        <span class="px-3 py-1 bg-emerald-600 text-white text-[9px] font-black rounded-lg uppercase tracking-widest shadow-lg shadow-emerald-200">{{ $s->tingkat }}</span>
+                        <span class="px-2 py-1 bg-slate-900 text-white text-[9px] font-black rounded-lg uppercase tracking-widest">Kelas {{ $s->kelas }}</span>
+                    </div>
 
                     <div class="flex items-center gap-5 mb-8 relative">
-                        <div class="w-20 h-20 bg-gradient-to-br from-emerald-50 to-teal-50 rounded-[2rem] flex items-center justify-center text-emerald-600 group-hover:from-emerald-600 group-hover:to-teal-600 group-hover:text-white transition-all duration-500 shadow-inner">
-                            <i class="fa-solid fa-user-graduate text-3xl"></i>
+                        {{-- Container Foto Siswa --}}
+                        <div class="w-20 h-20 rounded-[2rem] overflow-hidden shadow-inner flex-shrink-0 border-2 border-white group-hover:border-emerald-500 transition-all duration-500 bg-slate-50">
+                            @if($s->foto && Storage::disk('public')->exists('foto_siswa/' . $s->foto))
+                                <img src="{{ asset('storage/foto_siswa/' . $s->foto) }}" 
+                                     alt="Foto {{ $s->nama_siswa }}" 
+                                     class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                            @else
+                                <div class="w-full h-full flex items-center justify-center text-emerald-600 group-hover:bg-emerald-600 group-hover:text-white transition-all duration-500">
+                                    <i class="fa-solid fa-user-graduate text-3xl"></i>
+                                </div>
+                            @endif
                         </div>
-                        <div>
-                            <h3 class="font-black text-emerald-950 text-xl leading-tight group-hover:text-emerald-600 transition-colors">{{ $s->nama_siswa }}</h3>
+
+                        <div class="overflow-hidden pr-16"> {{-- Padding right biar ga nabrak badge --}}
+                            <h3 class="font-black text-emerald-950 text-xl leading-tight group-hover:text-emerald-600 transition-colors truncate">
+                                {{ $s->nama_siswa }}
+                            </h3>
                             <span class="inline-block px-3 py-1 bg-slate-100 rounded-lg text-[10px] font-black text-slate-400 uppercase tracking-widest mt-1">NIS: {{ $s->nis }}</span>
                         </div>
                     </div>
 
                     <div class="grid grid-cols-2 gap-4 mb-8 relative">
-                        <div class="p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                        <div class="p-4 bg-slate-50 rounded-2xl border border-slate-100 group-hover:bg-white transition-colors">
                             <span class="block text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Total Sesi</span>
-                            <span class="text-lg font-black text-emerald-600">{{ $s->rekam_terapi_count }} <span class="text-xs">Sesi</span></span>
+                            <span class="text-lg font-black text-emerald-600">{{ $s->rekam_terapi_count }} <span class="text-xs text-slate-400 font-bold">Sesi</span></span>
                         </div>
-                        <div class="p-4 bg-slate-50 rounded-2xl border border-slate-100">
+                        <div class="p-4 bg-slate-50 rounded-2xl border border-slate-100 group-hover:bg-white transition-colors">
                             <span class="block text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Status</span>
-                            <span class="text-[10px] font-black text-slate-600 uppercase tracking-tighter italic">Aktif Terapi</span>
+                            <span class="text-[10px] font-black text-emerald-600 uppercase tracking-tighter italic block mt-1">Aktif Terapi</span>
                         </div>
-                        <div class="col-span-2 p-4 bg-emerald-50/50 rounded-2xl border border-emerald-100/50">
+                        <div class="col-span-2 p-4 bg-emerald-50/50 rounded-2xl border border-emerald-100/50 group-hover:bg-emerald-50 transition-colors">
                             <span class="block text-[9px] font-black text-emerald-400 uppercase tracking-widest mb-1">Kebutuhan Khusus</span>
                             <p class="text-xs font-bold text-slate-600 line-clamp-1 italic">"{{ $s->kebutuhan_khusus }}"</p>
                         </div>

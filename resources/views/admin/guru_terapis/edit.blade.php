@@ -26,7 +26,8 @@
             </div>
         </div>
 
-        <form action="{{ route('guru-terapis.update', $guru->id) }}" method="POST">
+        {{-- Ditambahkan enctype="multipart/form-data" untuk upload file --}}
+        <form action="{{ route('guru-terapis.update', $guru->id) }}" method="POST" enctype="multipart/form-data">
             @csrf
             @method('PUT')
 
@@ -43,6 +44,44 @@
                                 </svg>
                             </div>
                             <h3 class="text-xl font-bold text-slate-800">Profil Terapis</h3>
+                        </div>
+
+                        {{-- Update Foto Profil Section --}}
+                        <div class="mb-8 relative z-10">
+                            <label class="text-sm font-bold text-indigo-900 ml-1 block mb-3">Foto Profil</label>
+                            <div class="flex items-center gap-6">
+                                <div class="relative group/avatar">
+                                    <div class="w-28 h-28 rounded-3xl overflow-hidden bg-indigo-50 border-2 border-dashed border-indigo-200 flex items-center justify-center relative shadow-inner">
+                                        {{-- Tampilkan foto lama jika ada, jika tidak pakai placeholder --}}
+@if($guru->foto)
+    <img id="previewFoto" 
+         src="{{ asset('storage/foto_guru/' . $guru->foto) }}" 
+         alt="Preview" 
+         class="w-full h-full object-cover">
+    <svg id="placeholderIcon" class="w-10 h-10 text-indigo-200 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+    </svg>
+@else
+    <img id="previewFoto" src="#" alt="Preview" class="hidden w-full h-full object-cover">
+    <svg id="placeholderIcon" class="w-10 h-10 text-indigo-200" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+    </svg>
+@endif
+                                    </div>
+                                </div>
+                                <div class="flex-1">
+                                    <input type="file" name="foto" id="inputFoto" accept="image/*" class="hidden" onchange="previewImage(this)">
+                                    <label for="inputFoto" class="inline-flex items-center px-5 py-2.5 bg-indigo-50 border-2 border-indigo-100 rounded-xl text-xs font-bold text-indigo-600 cursor-pointer hover:bg-indigo-600 hover:text-white hover:border-indigo-600 transition-all duration-300">
+                                        <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                                        Ganti Foto Baru
+                                    </label>
+                                    <p class="text-[10px] text-slate-400 mt-2 italic font-medium leading-relaxed">
+                                        * Kosongkan jika tidak ingin mengubah foto.<br>
+                                        * Format: JPG, PNG, JPEG (Maks. 2MB)
+                                    </p>
+                                    @error('foto') <p class="text-xs text-rose-500 font-bold mt-1">{{ $message }}</p> @enderror
+                                </div>
+                            </div>
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 relative z-10">
@@ -171,6 +210,7 @@
 </div>
 
 <script>
+    // Show/Hide Password
     function togglePassword() {
         const passwordField = document.getElementById('passwordField');
         const eyeOpen = document.getElementById('eyeOpen');
@@ -184,6 +224,22 @@
             passwordField.type = 'password';
             eyeOpen.classList.add('hidden');
             eyeClosed.classList.remove('hidden');
+        }
+    }
+
+    // Live Preview Image
+    function previewImage(input) {
+        const preview = document.getElementById('previewFoto');
+        const placeholder = document.getElementById('placeholderIcon');
+        
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+                preview.classList.remove('hidden');
+                if(placeholder) placeholder.classList.add('hidden');
+            }
+            reader.readAsDataURL(input.files[0]);
         }
     }
 </script>

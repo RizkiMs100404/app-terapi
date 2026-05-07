@@ -14,7 +14,6 @@
 
 <script src="https://cdn.tailwindcss.com"></script>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.3.0/flowbite.min.css" rel="stylesheet" />
-
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 <script>
@@ -23,46 +22,22 @@
         theme: {
             extend: {
                 colors: {
-                    // Warna Utama Ortu: Indigo & Violet (Eye Catching)
                     primary: {
-                        "50":"#f5f3ff",
-                        "100":"#ede9fe",
-                        "200":"#ddd6fe",
-                        "300":"#c4b5fd",
-                        "400":"#a78bfa",
-                        "500":"#8b5cf6", // Violet Central
-                        "600":"#7c3aed",
-                        "700":"#6d28d9",
-                        "800":"#5b21b6",
-                        "900":"#4c1d95",
-                        "950":"#2e1065"
+                        "50":"#f5f3ff", "100":"#ede9fe", "200":"#ddd6fe", "300":"#c4b5fd",
+                        "400":"#a78bfa", "500":"#8b5cf6", "600":"#7c3aed", "700":"#6d28d9",
+                        "800":"#5b21b6", "900":"#4c1d95", "950":"#2e1065"
                     },
-                    // Indigo accent untuk variasi
-                    accent: {
-                        "500": "#6366f1",
-                        "600": "#4f46e5"
-                    },
-                    darkBg: "#020617", // Lebih hitam pekat dari slate
+                    accent: { "500": "#6366f1", "600": "#4f46e5" },
+                    darkBg: "#020617",
                     darkSurface: "#0f172a"
                 },
                 animation: {
                     'fade-in': 'fadeIn 0.6s ease-out forwards',
                     'slide-up': 'slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards',
-                    'float': 'float 3s ease-in-out infinite',
                 },
                 keyframes: {
-                    fadeIn: {
-                        '0%': { opacity: '0' },
-                        '100%': { opacity: '1' },
-                    },
-                    slideUp: {
-                        '0%': { transform: 'translateY(20px)', opacity: '0' },
-                        '100%': { transform: 'translateY(0)', opacity: '1' },
-                    },
-                    float: {
-                        '0%, 100%': { transform: 'translateY(0)' },
-                        '50%': { transform: 'translateY(-5px)' },
-                    }
+                    fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
+                    slideUp: { '0%': { transform: 'translateY(20px)', opacity: '0' }, '100%': { transform: 'translateY(0)', opacity: '1' } },
                 }
             },
             fontFamily: {
@@ -74,12 +49,9 @@
 </script>
 
 <style>
-    /* Smooth Interaction */
-    * {
-        transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-
-    /* Custom Scrollbar Premium - Tema Ortu (Indigo) */
+    /* HAPUS TRANSISI GLOBAL (*) SUPAYA DROPDOWN SNAPPY */
+    
+    /* Custom Scrollbar Premium */
     ::-webkit-scrollbar { width: 6px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { 
@@ -102,11 +74,15 @@
         border: 1px solid rgba(255, 255, 255, 0.05);
     }
 
-    /* Soft Glow Effect untuk Card Orang Tua */
+    /* Soft Glow Effect */
     .glow-indigo {
         box-shadow: 0 0 20px -5px rgba(99, 102, 241, 0.2);
     }
     
+    /* Transisi ditaruh spesifik di hover aja, jangan di semua elemen (*) */
+    .hover-glow {
+        transition: all 0.3s ease;
+    }
     .hover-glow:hover {
         box-shadow: 0 10px 30px -10px rgba(99, 102, 241, 0.4);
         transform: translateY(-2px);

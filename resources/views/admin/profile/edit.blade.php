@@ -1,7 +1,7 @@
 @extends('admin.layouts.main')
 
 @section('content')
-<div class="min-h-screen p-6 lg:p-10 bg-[#F8FAFC]">
+<div class="min-h-screen p-6 lg:p-10">
     <div class="max-w-6xl mx-auto">
         {{-- Header --}}
         <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-10">

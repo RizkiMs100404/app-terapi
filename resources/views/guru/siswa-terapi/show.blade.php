@@ -32,21 +32,62 @@
                     <div class="absolute -top-10 -right-10 w-32 h-32 bg-emerald-50 rounded-full opacity-50"></div>
 
                     <div class="relative text-center mb-8">
-                        <div class="w-28 h-28 bg-gradient-to-br from-emerald-500 to-teal-600 rounded-[2.5rem] mx-auto mb-5 flex items-center justify-center text-white text-4xl font-black shadow-2xl shadow-emerald-200 transform rotate-3">
-                            <span class="-rotate-3">{{ substr($siswa->nama_siswa, 0, 1) }}</span>
+                        {{-- Container Foto Profil Siswa --}}
+                        <div class="relative w-32 h-32 mx-auto mb-5">
+                            {{-- Frame Luar yang Miring --}}
+                            <div class="w-full h-full bg-gradient-to-br from-emerald-500 to-teal-600 rounded-[2.5rem] flex items-center justify-center shadow-2xl shadow-emerald-200 transform rotate-3 overflow-hidden p-1">
+                                
+                                {{-- Bagian Foto/Inisial --}}
+                                <div class="w-full h-full rounded-[2.2rem] overflow-hidden flex items-center justify-center bg-emerald-600">
+                                    @if($siswa->foto && Storage::disk('public')->exists('foto_siswa/' . $siswa->foto))
+                                        <img src="{{ asset('storage/foto_siswa/' . $siswa->foto) }}" 
+                                            alt="{{ $siswa->nama_siswa }}" 
+                                            class="w-full h-full object-cover transform -rotate-3 scale-125">
+                                    @else
+                                        <span class="text-white text-4xl font-black transform -rotate-3">
+                                            {{ substr($siswa->nama_siswa, 0, 1) }}
+                                        </span>
+                                    @endif
+                                </div>
+                            </div>
+
+                            {{-- Dekorasi tambahan: Dot Online/Aktif --}}
+                            <div class="absolute bottom-1 right-1 w-7 h-7 bg-white rounded-full flex items-center justify-center shadow-lg transform rotate-3">
+                                <div class="w-4 h-4 bg-emerald-500 rounded-full animate-pulse"></div>
+                            </div>
                         </div>
-                        <h2 class="text-2xl font-black text-emerald-950 leading-tight mb-1">{{ $siswa->nama_siswa }}</h2>
-                        <span class="px-3 py-1 bg-slate-100 rounded-full text-[10px] font-black text-slate-500 uppercase tracking-widest">NIS: {{ $siswa->nis }}</span>
+
+                        <h2 class="text-2xl font-black text-emerald-950 leading-tight mb-2">{{ $siswa->nama_siswa }}</h2>
+                        
+                        <div class="flex flex-wrap justify-center gap-2">
+                            <span class="px-3 py-1 bg-emerald-50 text-emerald-700 rounded-lg text-[9px] font-black uppercase tracking-widest border border-emerald-100">
+                                NIS: {{ $siswa->nis }}
+                            </span>
+                            <span class="px-3 py-1 bg-slate-900 text-white rounded-lg text-[9px] font-black uppercase tracking-widest">
+                                {{ $siswa->tingkat }}
+                            </span>
+                        </div>
                     </div>
 
                     <div class="space-y-4 pt-6 border-t-2 border-dashed border-slate-100">
-                        {{-- Kebutuhan Khusus --}}
-                        <div class="group p-4 bg-emerald-50 rounded-2xl border border-emerald-100 hover:bg-emerald-600 transition-all duration-500">
-                            <div class="flex items-center gap-3 mb-1">
-                                <i class="fa-solid fa-star-of-life text-emerald-400 group-hover:text-emerald-200 text-xs animate-spin-slow"></i>
-                                <span class="block text-[9px] font-black text-emerald-400 group-hover:text-emerald-200 uppercase tracking-widest">Diagnosa Utama</span>
+                        {{-- Info Kelas --}}
+                        <div class="flex items-center gap-4 px-4 py-3 bg-emerald-50/50 rounded-2xl border border-emerald-100/50 hover:bg-emerald-50 transition-all group">
+                            <div class="w-10 h-10 rounded-xl bg-white shadow-sm flex items-center justify-center text-emerald-500 group-hover:scale-110 transition-transform">
+                                <i class="fa-solid fa-school text-sm"></i>
                             </div>
-                            <p class="text-sm font-black text-emerald-800 group-hover:text-white transition-colors">
+                            <div>
+                                <span class="block text-[9px] font-black text-emerald-400 uppercase tracking-widest">Kelas</span>
+                                <p class="text-sm font-black text-emerald-800 leading-none mt-1">Kelas {{ $siswa->kelas }}</p>
+                            </div>
+                        </div>
+
+                        {{-- Kebutuhan Khusus --}}
+                        <div class="group p-4 bg-slate-50 rounded-2xl border border-transparent hover:border-emerald-100 hover:bg-emerald-50 transition-all duration-500">
+                            <div class="flex items-center gap-3 mb-1">
+                                <i class="fa-solid fa-star-of-life text-emerald-400 text-xs animate-spin-slow"></i>
+                                <span class="block text-[9px] font-black text-slate-400 uppercase tracking-widest">Kebutuhan Khusus</span>
+                            </div>
+                            <p class="text-sm font-black text-slate-700 group-hover:text-emerald-800 transition-colors">
                                 {{ $siswa->kebutuhan_khusus }}
                             </p>
                         </div>

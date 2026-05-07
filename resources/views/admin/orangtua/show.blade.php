@@ -109,9 +109,20 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         @forelse($orangtua->anak as $anak)
                         <div class="bg-white p-6 rounded-[2.5rem] border border-slate-100 shadow-sm flex items-center gap-5 group hover:border-indigo-200 hover:shadow-lg hover:shadow-indigo-900/5 transition-all duration-300">
-                            <div class="w-16 h-16 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center font-black text-xl border border-indigo-100 group-hover:bg-indigo-600 group-hover:text-white group-hover:rotate-6 transition-all duration-300">
-                                {{ substr($anak->nama_siswa, 0, 1) }}
+                            
+                            {{-- FOTO SISWA --}}
+                            <div class="w-16 h-16 relative flex-shrink-0">
+                                @if($anak->foto && Storage::exists('public/foto_siswa/' . $anak->foto))
+                                    <img src="{{ asset('storage/foto_siswa/' . $anak->foto) }}" 
+                                         class="w-full h-full object-cover rounded-2xl shadow-sm border border-slate-100 group-hover:rotate-6 transition-all duration-300" 
+                                         alt="{{ $anak->nama_siswa }}">
+                                @else
+                                    <div class="w-full h-full bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center font-black text-xl border border-indigo-100 group-hover:bg-indigo-600 group-hover:text-white group-hover:rotate-6 transition-all duration-300 uppercase">
+                                        {{ substr($anak->nama_siswa, 0, 1) }}
+                                    </div>
+                                @endif
                             </div>
+
                             <div>
                                 <h4 class="font-black text-slate-800 group-hover:text-indigo-600 transition-colors uppercase leading-tight">{{ $anak->nama_siswa }}</h4>
                                 <div class="flex items-center gap-2 mt-1">

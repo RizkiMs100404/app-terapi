@@ -26,18 +26,42 @@
             </div>
         </div>
 
-        <form action="{{ route('guru-terapis.store') }}" method="POST">
+        {{-- Wajib tambah enctype="multipart/form-data" --}}
+        <form action="{{ route('guru-terapis.store') }}" method="POST" enctype="multipart/form-data">
             @csrf
             <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                
                 {{-- Sisi Kiri: Biodata --}}
                 <div class="lg:col-span-2 space-y-8">
                     <div class="group bg-white p-8 rounded-[2.5rem] border border-indigo-50 shadow-xl shadow-indigo-900/5 relative overflow-hidden transition-all duration-500 hover:shadow-indigo-900/10">
                         <div class="absolute top-0 right-0 w-32 h-32 bg-indigo-600/5 rounded-full -mr-16 -mt-16 transition-all duration-700 group-hover:scale-[3] group-hover:bg-indigo-600/10"></div>
+                        
                         <div class="flex items-center gap-3 mb-8 relative z-10">
                             <div class="w-12 h-12 bg-indigo-600 rounded-2xl flex items-center justify-center text-white shadow-lg shadow-indigo-200">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
                             </div>
                             <h3 class="text-xl font-bold text-slate-800">Biodata Profesional</h3>
+                        </div>
+
+                        {{-- Input Foto Profil --}}
+                        <div class="mb-8 relative z-10">
+                            <label class="text-sm font-bold text-indigo-900 ml-1 block mb-3">Foto Profil</label>
+                            <div class="flex items-center gap-6">
+                                <div class="relative group/avatar">
+                                    <div class="w-24 h-24 rounded-3xl overflow-hidden bg-indigo-50 border-2 border-dashed border-indigo-200 flex items-center justify-center relative">
+                                        <img id="previewFoto" src="#" alt="Preview" class="hidden w-full h-full object-cover">
+                                        <svg id="placeholderIcon" class="w-10 h-10 text-indigo-200" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                                    </div>
+                                </div>
+                                <div class="flex-1">
+                                    <input type="file" name="foto" id="inputFoto" accept="image/*" class="hidden" onchange="previewImage(this)">
+                                    <label for="inputFoto" class="inline-flex items-center px-4 py-2 bg-white border-2 border-indigo-100 rounded-xl text-xs font-bold text-indigo-600 cursor-pointer hover:bg-indigo-50 hover:border-indigo-300 transition-all">
+                                        Pilih Foto
+                                    </label>
+                                    <p class="text-[10px] text-slate-400 mt-2 italic">* Format: JPG, PNG, JPEG (Maks. 2MB)</p>
+                                    @error('foto') <p class="text-xs text-rose-500 font-bold mt-1">{{ $message }}</p> @enderror
+                                </div>
+                            </div>
                         </div>
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 relative z-10">
@@ -140,9 +164,26 @@
 </div>
 
 <script>
+    // Toggle Password Visibility
     function togglePassword() {
         const passwordField = document.getElementById('passwordField');
         passwordField.type = passwordField.type === 'password' ? 'text' : 'password';
+    }
+
+    // Live Preview Image
+    function previewImage(input) {
+        const preview = document.getElementById('previewFoto');
+        const placeholder = document.getElementById('placeholderIcon');
+        
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+                preview.classList.remove('hidden');
+                placeholder.classList.add('hidden');
+            }
+            reader.readAsDataURL(input.files[0]);
+        }
     }
 </script>
 @endsection

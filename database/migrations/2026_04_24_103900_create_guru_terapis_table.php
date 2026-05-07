@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('nip')->unique();
             $table->enum('jenis_kelamin', ['L', 'P']);
             $table->string('nomor_hp');
+            $table->string('foto')->nullable();
             $table->text('keahlian_terapi');
             $table->enum('status_kerja', ['Aktif', 'Non-Aktif'])->default('Aktif');
             $table->timestamps();

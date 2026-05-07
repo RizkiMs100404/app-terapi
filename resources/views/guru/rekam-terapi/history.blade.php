@@ -24,20 +24,44 @@
         </div>
 
         {{-- Search & Filter Card --}}
-        <div class="bg-white p-4 rounded-[2.5rem] border border-slate-100 shadow-xl shadow-slate-200/50 mb-10 transition-all hover:shadow-2xl hover:shadow-slate-200/60">
-            <form action="{{ route('guru.rekam-terapi.history') }}" method="GET" class="flex flex-col md:flex-row gap-3">
-                <div class="relative flex-1 group">
-                    <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
-                        <i class="fa-solid fa-magnifying-glass text-slate-400 group-focus-within:text-emerald-500 transition-colors"></i>
+        <div class="bg-white p-6 rounded-[2.5rem] border border-slate-100 shadow-xl shadow-slate-200/50 mb-10 transition-all hover:shadow-2xl hover:shadow-slate-200/60">
+            <form action="{{ route('guru.rekam-terapi.history') }}" method="GET" class="space-y-4">
+                <div class="flex flex-col md:flex-row gap-4">
+                    {{-- Search Bar --}}
+                    <div class="relative flex-[2] group">
+                        <div class="absolute inset-y-0 left-0 pl-5 flex items-center pointer-events-none">
+                            <i class="fa-solid fa-magnifying-glass text-slate-400 group-focus-within:text-emerald-500 transition-colors"></i>
+                        </div>
+                        <input type="text" name="search" value="{{ request('search') }}"
+                            placeholder="Cari nama siswa atau nomor sesi..."
+                            class="w-full bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl pl-14 pr-5 py-4 text-sm font-bold text-slate-700 transition-all outline-none">
                     </div>
-                    <input type="text" name="search" value="{{ request('search') }}"
-                        placeholder="Cari nama siswa atau nomor sesi..."
-                        class="w-full bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl pl-14 pr-5 py-4 text-sm font-bold text-slate-700 transition-all outline-none">
+
+                    {{-- Filter Tingkat --}}
+                    <div class="flex-1">
+                        <select name="tingkat" class="w-full bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl px-5 py-4 text-sm font-bold text-slate-700 transition-all outline-none appearance-none">
+                            <option value="">Semua Tingkat</option>
+                            <option value="SDLB" {{ request('tingkat') == 'SDLB' ? 'selected' : '' }}>SDLB</option>
+                            <option value="SMPLB" {{ request('tingkat') == 'SMPLB' ? 'selected' : '' }}>SMPLB</option>
+                            <option value="SMALB" {{ request('tingkat') == 'SMALB' ? 'selected' : '' }}>SMALB</option>
+                        </select>
+                    </div>
+
+                    {{-- Filter Kelas --}}
+                    <div class="flex-1">
+                        <select name="kelas" class="w-full bg-slate-50 border-2 border-transparent focus:border-emerald-500 focus:bg-white rounded-2xl px-5 py-4 text-sm font-bold text-slate-700 transition-all outline-none appearance-none">
+                            <option value="">Semua Kelas</option>
+                            @for ($i = 1; $i <= 12; $i++)
+                                <option value="{{ $i }}" {{ request('kelas') == $i ? 'selected' : '' }}>Kelas {{ $i }}</option>
+                            @endfor
+                        </select>
+                    </div>
+
+                    <button type="submit" class="px-8 bg-slate-900 text-white rounded-2xl font-black text-xs uppercase tracking-[0.2em] hover:bg-emerald-600 hover:shadow-lg hover:shadow-emerald-200 transition-all active:scale-95 py-4 md:py-0 flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-filter text-[10px]"></i>
+                        Terapkan
+                    </button>
                 </div>
-                <button type="submit" class="px-10 bg-slate-900 text-white rounded-2xl font-black text-xs uppercase tracking-[0.2em] hover:bg-emerald-600 hover:shadow-lg hover:shadow-emerald-200 transition-all active:scale-95 py-4 md:py-0 flex items-center justify-center gap-2">
-                    <i class="fa-solid fa-filter text-[10px]"></i>
-                    Filter Data
-                </button>
             </form>
         </div>
 
@@ -52,7 +76,6 @@
                             <th class="px-8 py-7 text-[11px] font-black text-slate-400 uppercase tracking-[0.2em]">Analisis Kemajuan</th>
                             <th class="px-8 py-7 text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] text-center">Skor</th>
                             <th class="px-8 py-7 text-[11px] font-black text-slate-400 uppercase tracking-[0.2em]">Absensi</th>
-                            <th class="px-8 py-7 text-[11px] font-black text-slate-400 uppercase tracking-[0.2em] text-center">Tindakan</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-50">
@@ -73,14 +96,19 @@
                                         {{ substr($r->jadwal->siswa->nama_siswa, 0, 2) }}
                                     </div>
                                     <div>
-                                        <p class="font-black text-slate-800 text-base leading-none mb-1.5">{{ $r->jadwal->siswa->nama_siswa }}</p>
+                                        <p class="font-black text-slate-800 text-base leading-none mb-1">{{ $r->jadwal->siswa->nama_siswa }}</p>
+                                        <div class="flex items-center gap-2 mb-1.5">
+                                            <span class="text-[9px] font-black text-slate-400 uppercase">{{ $r->jadwal->siswa->tingkat }}</span>
+                                            <span class="w-1 h-1 bg-slate-300 rounded-full"></span>
+                                            <span class="text-[9px] font-black text-emerald-600 uppercase">Kelas {{ $r->jadwal->siswa->kelas }}</span>
+                                        </div>
                                         <p class="text-[9px] font-black text-emerald-600 uppercase tracking-widest bg-emerald-50 px-2 py-0.5 rounded-md inline-flex items-center gap-1.5">
-                                            <span class="w-1 h-1 bg-emerald-500 rounded-full animate-pulse"></span>
                                             {{ $r->jadwal->jenis_terapi }}
                                         </p>
                                     </div>
                                 </div>
                             </td>
+                            {{-- ... (Bagian Analisis Kemajuan, Skor, dan Absensi tetap sama seperti sebelumnya) ... --}}
                             <td class="px-8 py-6">
                                 @php
                                     $config = match($r->hasil_kemajuan) {
@@ -132,14 +160,6 @@
                                     {{ $r->status_kehadiran }}
                                 </span>
                             </td>
-                            <td class="px-8 py-6 text-center">
-                                <div class="flex items-center justify-center gap-2">
-                                    <a href="{{ route('guru.rekam-terapi.edit', $r->id) }}"
-                                       class="p-3.5 bg-white border-2 border-slate-100 text-slate-400 hover:text-emerald-600 hover:border-emerald-500 hover:bg-emerald-50 rounded-2xl transition-all shadow-sm hover:shadow-emerald-100 active:scale-90 group/btn">
-                                        <i class="fa-solid fa-pen-to-square text-lg transition-transform group-hover/btn:-rotate-12"></i>
-                                    </a>
-                                </div>
-                            </td>
                         </tr>
                         @empty
                         <tr>
@@ -171,28 +191,25 @@
 </div>
 
 <style>
-    /* Custom Pagination Styling */
+    /* Styling select appearance agar lebih clean */
+    select {
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%2394a3b8' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+        background-position: right 1rem center;
+        background-repeat: no-repeat;
+        background-size: 1.5em 1.5em;
+    }
+    
+    /* ... (Style Pagination & Animasi tetap sama) ... */
     .pagination { @apply flex gap-2 justify-center; }
     .page-item.active .page-link { @apply bg-emerald-600 border-emerald-600 text-white rounded-2xl shadow-xl shadow-emerald-200; }
     .page-link { @apply rounded-2xl border-none bg-white text-slate-700 font-black px-5 py-3 hover:bg-emerald-50 transition-all shadow-sm; }
 
-    /* Micro Animations */
     @keyframes bounce-slow {
         0%, 100% { transform: translateY(0) rotate(0deg); }
         50% { transform: translateY(-5px) rotate(5deg); }
     }
     .animate-bounce-slow {
         animation: bounce-slow 2.5s infinite ease-in-out;
-    }
-
-    .custom-scrollbar::-webkit-scrollbar {
-        width: 6px;
-    }
-    .custom-scrollbar::-webkit-scrollbar-track {
-        background: transparent;
-    }
-    .custom-scrollbar::-webkit-scrollbar-thumb {
-        @apply bg-slate-200 rounded-full hover:bg-emerald-200 transition-colors;
     }
 </style>
 @endsection

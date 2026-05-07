@@ -2,7 +2,8 @@
 
 @section('content')
 <div class="max-w-6xl mx-auto px-4 py-8">
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-10">
+    {{-- Header Section --}}
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
         <div>
             <h1 class="text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">
                 Tahun <span class="text-indigo-600">Akademik</span>
@@ -22,6 +23,45 @@
         </a>
     </div>
 
+    {{-- Filter & Search Section --}}
+    <div class="mb-6 bg-white dark:bg-gray-900 p-4 rounded-[2rem] border border-slate-200 dark:border-gray-800 shadow-sm">
+        <form action="{{ route('tahun-ajaran.index') }}" method="GET" class="flex flex-col md:flex-row gap-4">
+            <!-- Search -->
+            <div class="relative flex-1">
+                <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-slate-400">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                </div>
+                <input type="text" name="search" value="{{ request('search') }}" 
+                    placeholder="Cari rentang tahun (cth: 2023/2024)..." 
+                    class="block w-full pl-11 pr-4 py-3 rounded-xl border border-slate-200 dark:border-gray-700 bg-slate-50/50 dark:bg-gray-800 focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all text-sm">
+            </div>
+
+            <!-- Filter Semester -->
+            <div class="w-full md:w-48">
+                <select name="filter_semester" onchange="this.form.submit()"
+                    class="block w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-gray-700 bg-slate-50/50 dark:bg-gray-800 focus:ring-2 focus:ring-indigo-500 text-sm appearance-none cursor-pointer">
+                    <option value="">Semua Semester</option>
+                    <option value="Ganjil" {{ request('filter_semester') == 'Ganjil' ? 'selected' : '' }}>Ganjil</option>
+                    <option value="Genap" {{ request('filter_semester') == 'Genap' ? 'selected' : '' }}>Genap</option>
+                </select>
+            </div>
+
+            <div class="flex gap-2">
+                <button type="submit" class="px-6 py-3 bg-slate-900 dark:bg-indigo-600 text-white font-bold rounded-xl hover:bg-slate-800 transition-all text-sm">
+                    Cari
+                </button>
+                @if(request('search') || request('filter_semester'))
+                    <a href="{{ route('tahun-ajaran.index') }}" class="px-6 py-3 bg-slate-100 dark:bg-gray-800 text-slate-600 dark:text-slate-300 font-bold rounded-xl hover:bg-slate-200 transition-all text-sm flex items-center">
+                        Reset
+                    </a>
+                @endif
+            </div>
+        </form>
+    </div>
+
+    {{-- Table Section --}}
     <div class="bg-white dark:bg-gray-900 border border-slate-200 dark:border-gray-800 rounded-[2.5rem] overflow-hidden shadow-xl shadow-slate-100/50 dark:shadow-none">
         <div class="overflow-x-auto">
             <table class="w-full text-left border-collapse">
@@ -75,7 +115,7 @@
                         <td class="px-8 py-6">
                             <div class="flex justify-end items-center gap-3">
                                 <a href="{{ route('tahun-ajaran.edit', $ta->id) }}"
-                                   class="group/edit p-3 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/30 rounded-2xl transition-all"
+                                   class="group/edit p-3 text-slate-400 hover:text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-900/30 rounded-2xl transition-all"
                                    title="Edit Data">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
@@ -99,6 +139,7 @@
             </table>
         </div>
 
+        {{-- Empty State --}}
         @if($dataTA->isEmpty())
         <div class="py-20 text-center">
             <div class="inline-flex p-6 bg-slate-50 dark:bg-gray-800 rounded-full mb-4 text-slate-300">
@@ -106,8 +147,15 @@
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 00-2 2H6a2 2 0 00-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path>
                 </svg>
             </div>
-            <h3 class="text-lg font-bold text-slate-900 dark:text-white">Belum Ada Data</h3>
-            <p class="text-slate-500 text-sm">Klik tombol "Tambah Periode Baru" untuk memulai.</p>
+            <h3 class="text-lg font-bold text-slate-900 dark:text-white">Data tidak ditemukan</h3>
+            <p class="text-slate-500 text-sm">Coba kata kunci lain atau tambahkan periode baru.</p>
+        </div>
+        @endif
+
+        {{-- Pagination --}}
+        @if($dataTA->hasPages())
+        <div class="px-8 py-6 border-t border-slate-100 dark:border-gray-800 bg-slate-50/30">
+            {{ $dataTA->links() }}
         </div>
         @endif
     </div>
@@ -115,7 +163,6 @@
 
 <script>
     function toggleStatus(id) {
-        // Gunakan URL Absolut dengan window.location.origin
         const url = `${window.location.origin}/admin/tahun-ajaran/toggle/${id}`;
 
         fetch(url, {
@@ -127,16 +174,11 @@
             }
         })
         .then(async res => {
-            if (!res.ok) {
-                const text = await res.text();
-                console.error('Server Error:', text);
-                throw new Error('Gagal menghubungi server.');
-            }
+            if (!res.ok) throw new Error('Gagal menghubungi server.');
             return res.json();
         })
         .then(data => {
             if(data.success) {
-                // Beri feedback visual sedikit sebelum reload (opsional)
                 window.location.reload();
             } else {
                 alert('Peringatan: ' + (data.message || 'Gagal mengubah status'));
@@ -144,7 +186,7 @@
         })
         .catch(err => {
             console.error('Fetch Error:', err);
-            alert('Terjadi kesalahan koneksi. Pastikan Route POST /admin/tahun-ajaran/toggle/{id} sudah benar.');
+            alert('Terjadi kesalahan koneksi.');
         });
     }
 </script>

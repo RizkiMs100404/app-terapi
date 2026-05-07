@@ -31,11 +31,19 @@
                         </svg>
                     </div>
                     <input type="text" name="search" value="{{ request('search') }}"
-                        placeholder="Cari nama ayah, nama ibu, atau email..."
+                        placeholder="Cari nama wali, nama anak, atau email..."
                         class="block w-full pl-12 pr-4 py-4 bg-slate-50 border-none rounded-2xl text-sm font-medium focus:ring-4 focus:ring-indigo-50 transition-all outline-none">
                 </div>
 
                 <div class="flex flex-wrap md:flex-nowrap gap-4">
+                    {{-- New: Filter Tingkat --}}
+                    <select name="tingkat" class="px-6 py-4 bg-slate-50 border-none rounded-2xl text-sm font-bold text-slate-700 focus:ring-4 focus:ring-indigo-50 outline-none">
+                        <option value="">Semua Tingkat</option>
+                        @foreach(['SDLB', 'SMPLB', 'SMALB'] as $tkt)
+                            <option value="{{ $tkt }}" {{ request('tingkat') == $tkt ? 'selected' : '' }}>{{ $tkt }}</option>
+                        @endforeach
+                    </select>
+
                     <select name="tahun_ajaran" class="px-6 py-4 bg-slate-50 border-none rounded-2xl text-sm font-bold text-slate-700 focus:ring-4 focus:ring-indigo-50 outline-none">
                         <option value="">Semua Tahun Ajaran</option>
                         @foreach($listTahunAjaran as $ta)
@@ -49,7 +57,7 @@
                         FILTER
                     </button>
 
-                    @if(request()->anyFilled(['search', 'tahun_ajaran']))
+                    @if(request()->anyFilled(['search', 'tahun_ajaran', 'tingkat']))
                         <a href="{{ route('orangtua.index') }}" class="px-6 py-4 bg-red-50 text-red-600 rounded-2xl font-bold text-sm hover:bg-red-100 transition-all flex items-center justify-center">
                             RESET
                         </a>
@@ -67,7 +75,7 @@
                             <th class="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Wali Murid</th>
                             <th class="px-6 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Informasi Ibu</th>
                             <th class="px-6 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Tahun Ajaran</th>
-                            <th class="px-6 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Anak</th>
+                            <th class="px-6 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Anak & Kelas</th>
                             <th class="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Aksi</th>
                         </tr>
                     </thead>
@@ -103,31 +111,33 @@
                                 </span>
                             </td>
                             <td class="px-6 py-6">
-    <div class="flex flex-col gap-2">
-        @if($ortu->anak->count() > 0)
-            @foreach($ortu->anak as $anak)
-                <div class="inline-flex items-center gap-2 group/child">
-                    {{-- Dot Indikator --}}
-                    <div class="w-1.5 h-1.5 rounded-full bg-indigo-400 group-hover/child:scale-150 transition-transform"></div>
-
-                    {{-- Nama Anak --}}
-                    <span class="text-xs font-bold text-slate-700 bg-slate-100 group-hover/child:bg-indigo-600 group-hover/child:text-white px-3 py-1 rounded-lg transition-all border border-slate-200 group-hover/child:border-indigo-600">
-                        {{ $anak->nama_siswa }}
-                    </span>
-
-                </div>
-            @endforeach
-        @else
-            <span class="text-[10px] font-black text-slate-300 italic uppercase tracking-widest">Belum Terhubung</span>
-        @endif
-    </div>
-</td>
+                                <div class="flex flex-col gap-3">
+                                    @if($ortu->siswa->count() > 0)
+                                        @foreach($ortu->siswa as $anak)
+                                            <div class="flex flex-col group/child">
+                                                <div class="flex items-center gap-2">
+                                                    <div class="w-1.5 h-1.5 rounded-full bg-indigo-400 group-hover/child:scale-150 transition-transform"></div>
+                                                    <span class="text-xs font-black text-slate-700 uppercase tracking-tight">
+                                                        {{ $anak->nama_siswa }}
+                                                    </span>
+                                                </div>
+                                                <div class="flex items-center gap-2 mt-0.5 ml-3.5">
+                                                    <span class="text-[9px] font-black text-indigo-500 px-1.5 py-0.5 bg-indigo-50 rounded shadow-sm">{{ $anak->tingkat }}</span>
+                                                    <span class="text-[9px] font-bold text-slate-400 italic">Kelas {{ $anak->kelas }}</span>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    @else
+                                        <span class="text-[10px] font-black text-slate-300 italic uppercase tracking-widest">Belum Terhubung</span>
+                                    @endif
+                                </div>
+                            </td>
                             <td class="px-8 py-6 text-right">
                                 <div class="flex items-center justify-end gap-2">
                                     <a href="{{ route('orangtua.show', $ortu->id) }}" class="p-2.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all" title="Detail">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                                     </a>
-                                    <a href="{{ route('orangtua.edit', $ortu->id) }}" class="p-2.5 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-xl transition-all" title="Edit">
+                                    <a href="{{ route('orangtua.edit', $ortu->id) }}" class="p-2.5 text-slate-400 hover:text-amber-600 hover:bg-amber-50 rounded-xl transition-all" title="Edit">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                                     </a>
                                     <form action="{{ route('orangtua.destroy', $ortu->id) }}" method="POST" class="inline" onsubmit="return confirm('Hapus data orang tua dan akun loginnya?')">

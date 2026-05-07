@@ -37,19 +37,28 @@
                     @endphp
                     <div class="{{ $headerColor }} p-8 text-white transition-colors duration-500">
                         <div class="flex justify-between items-start">
-                            <div>
-                                <span class="px-3 py-1 bg-white/20 rounded-lg text-[10px] font-black uppercase tracking-widest">{{ $rekam->jadwal->jenis_terapi }}</span>
-                                <h2 class="text-3xl font-black mt-2">{{ $rekam->jadwal->siswa->nama_siswa }}</h2>
+                            <div class="space-y-3">
+                                <div class="flex items-center gap-2">
+                                    <span class="px-3 py-1 bg-white/20 rounded-lg text-[10px] font-black uppercase tracking-widest italic">{{ $rekam->jadwal->jenis_terapi }}</span>
+                                    {{-- Badge Tingkat & Kelas --}}
+                                    <span class="px-3 py-1 bg-black/20 rounded-lg text-[10px] font-black uppercase tracking-widest border border-white/10">{{ $rekam->jadwal->siswa->tingkat }}</span>
+                                    <span class="px-3 py-1 bg-black/20 rounded-lg text-[10px] font-black uppercase tracking-widest border border-white/10">Kelas {{ $rekam->jadwal->siswa->kelas }}</span>
+                                </div>
+                                <h2 class="text-4xl font-black">{{ $rekam->jadwal->siswa->nama_siswa }}</h2>
+                                <p class="text-white/80 text-[11px] font-bold tracking-widest uppercase">ID Siswa: {{ $rekam->jadwal->siswa->nisn ?? 'N/A' }}</p>
                             </div>
                             <div class="text-right">
-                                <p class="text-white/70 text-xs font-bold uppercase tracking-tighter leading-none">Tanggal Pelaksanaan</p>
+                                <p class="text-white/70 text-xs font-bold uppercase tracking-tighter leading-none mb-1">Tanggal Pelaksanaan</p>
                                 <p class="text-xl font-black">{{ \Carbon\Carbon::parse($rekam->tanggal_pelaksanaan)->translatedFormat('d F Y') }}</p>
+                                <div class="mt-2 inline-flex items-center px-3 py-1 bg-white/10 rounded-full text-[10px] font-black">
+                                    SESI NOMOR #{{ $rekam->nomor_sesi }}
+                                </div>
                             </div>
                         </div>
                     </div>
 
                     <div class="p-8 space-y-8">
-                        {{-- Hasil Kemajuan (Premium Icon & Highlight) --}}
+                        {{-- Hasil Kemajuan --}}
                         <div>
                             <h4 class="flex items-center gap-2 text-sm font-black text-slate-900 uppercase tracking-widest mb-4">
                                 <span class="w-2 h-6 bg-indigo-500 rounded-full"></span>
@@ -59,29 +68,19 @@
                                 <div class="p-4 rounded-2xl bg-slate-50 border border-slate-100">
                                     @switch($rekam->hasil_kemajuan)
                                         @case('Meningkat Pesat')
-                                            <svg class="w-10 h-10 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                                            </svg>
+                                            <svg class="w-10 h-10 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
                                             @break
                                         @case('Meningkat')
-                                            <svg class="w-10 h-10 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
-                                            </svg>
+                                            <svg class="w-10 h-10 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
                                             @break
                                         @case('Tetap')
-                                            <svg class="w-10 h-10 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h8m-8 5h8m-8 5h8"></path>
-                                            </svg>
+                                            <svg class="w-10 h-10 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h8m-8 5h8m-8 5h8"></path></svg>
                                             @break
                                         @case('Menurun')
-                                            <svg class="w-10 h-10 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0v-8m0 8l-8-8-4 4-6-6"></path>
-                                            </svg>
+                                            <svg class="w-10 h-10 text-rose-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17h8m0 0v-8m0 8l-8-8-4 4-6-6"></path></svg>
                                             @break
                                         @default
-                                            <svg class="w-10 h-10 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
-                                            </svg>
+                                            <svg class="w-10 h-10 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                                     @endswitch
                                 </div>
                                 <div>
@@ -97,7 +96,7 @@
                                 <span class="w-2 h-6 bg-emerald-500 rounded-full"></span>
                                 Deskripsi Sesi & Observasi
                             </h4>
-                            <div class="bg-white p-6 rounded-3xl border-2 border-dashed border-slate-100 text-slate-600 leading-relaxed font-medium">
+                            <div class="bg-slate-50 p-6 rounded-3xl border-2 border-dashed border-slate-100 text-slate-600 leading-relaxed font-medium">
                                 {{ $rekam->catatan_terapis }}
                             </div>
                         </div>
@@ -144,7 +143,7 @@
                             </div>
                             <div class="flex flex-col">
                                 <span class="font-bold text-slate-700 text-sm">{{ $rekam->jadwal->guru->user->name }}</span>
-                                <span class="text-[9px] text-slate-400 font-black uppercase">NIP/ID Guru</span>
+                                <span class="text-[9px] text-slate-400 font-black uppercase">NIP: {{ $rekam->jadwal->guru->nip ?? '-' }}</span>
                             </div>
                         </div>
                     </div>

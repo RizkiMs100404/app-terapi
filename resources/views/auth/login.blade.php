@@ -15,7 +15,7 @@
         body { font-family: 'Plus Jakarta Sans', sans-serif; background: #fdfdfd; }
         .mesh-gradient {
             background-color: #ffffff;
-            background-image:
+            background-image: 
                 radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.05) 0px, transparent 50%),
                 radial-gradient(at 100% 0%, rgba(59, 130, 246, 0.05) 0px, transparent 50%);
         }
@@ -41,7 +41,8 @@
     </div>
 
     <div class="max-w-5xl w-full grid md:grid-cols-12 gap-0 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.12)] ring-1 ring-slate-200/60 rounded-[3rem] overflow-hidden glass-card">
-
+        
+        <!-- Left Side: Illustration -->
         <div class="hidden md:flex md:col-span-5 flex-col justify-center items-center p-12 bg-slate-50/50 border-r border-gray-100">
             <div id="lottie-container" class="w-full max-w-[320px] h-auto"></div>
             <div class="text-center mt-8">
@@ -52,8 +53,9 @@
             </div>
         </div>
 
+        <!-- Right Side: Form -->
         <div class="md:col-span-7 p-8 md:p-16 flex flex-col justify-center bg-white">
-
+            
             <div class="flex flex-col items-center mb-10">
                 <div class="p-4 bg-white rounded-3xl shadow-md border border-gray-50 mb-4 transition-transform hover:scale-105 duration-500">
                     <img src="{{ asset('img/logo.png') }}" alt="Logo SLB" class="h-24 w-auto">
@@ -71,7 +73,8 @@
 
             <form action="{{ url('/login') }}" method="POST" class="max-w-md mx-auto w-full space-y-6">
                 @csrf
-
+                
+                <!-- Input Login -->
                 <div class="space-y-2">
                     <label class="block text-[11px] font-bold text-slate-500 uppercase tracking-widest ml-1">ID Akun / Email</label>
                     <div class="relative group">
@@ -84,6 +87,7 @@
                     @enderror
                 </div>
 
+                <!-- Input Password -->
                 <div class="space-y-2">
                     <div class="flex justify-between items-center px-1">
                         <label class="text-[11px] font-bold text-slate-500 uppercase tracking-widest">Kata Sandi</label>
@@ -93,7 +97,7 @@
                         <input type="password" id="passwordInput" name="password" required
                             class="w-full pl-5 pr-14 py-4 bg-white border border-slate-200 rounded-2xl outline-none transition-all focus:ring-4 focus:ring-emerald-500/5 focus:border-emerald-500 text-sm font-semibold shadow-sm"
                             placeholder="••••••••">
-
+                        
                         <button type="button" onclick="togglePassword()" class="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 flex items-center justify-center text-slate-400 hover:text-emerald-600 transition-all">
                             <i id="eyeIcon" class="fa-regular fa-eye text-lg"></i>
                         </button>
@@ -103,14 +107,17 @@
                     @enderror
                 </div>
 
+                <!-- Remember Me & Checkbox -->
                 <div class="flex items-center justify-between px-1">
                     <label class="inline-flex items-center cursor-pointer group" for="remember">
-                        <input type="checkbox" id="remember" name="remember" class="w-4 h-4 text-emerald-600 border-slate-300 rounded focus:ring-emerald-500/20 cursor-pointer">
+                        <input type="checkbox" id="remember" name="remember" {{ old('remember') ? 'checked' : '' }}
+                            class="w-4 h-4 text-emerald-600 border-slate-300 rounded focus:ring-emerald-500/20 cursor-pointer">
                         <span class="ml-2 text-xs font-bold text-slate-400 group-hover:text-slate-600 transition-colors">Ingat Saya</span>
                     </label>
                 </div>
 
-                <button type="submit"
+                <!-- Submit Button -->
+                <button type="submit" 
                     class="w-full bg-slate-900 text-white font-bold py-4 rounded-2xl shadow-xl shadow-slate-200 hover:bg-emerald-600 hover:shadow-emerald-200 transition-all duration-300 active:scale-[0.98] text-[11px] uppercase tracking-[0.2em]">
                     Masuk Sekarang
                 </button>
@@ -132,7 +139,7 @@
         function togglePassword() {
             const passwordInput = document.getElementById('passwordInput');
             const eyeIcon = document.getElementById('eyeIcon');
-
+            
             if (passwordInput.type === 'password') {
                 passwordInput.type = 'text';
                 eyeIcon.classList.replace('fa-eye', 'fa-eye-slash');
@@ -142,16 +149,14 @@
             }
         }
 
-        // Auto-hide alerts and errors after 4 seconds
+        // Auto-hide alerts and errors
         document.addEventListener('DOMContentLoaded', function() {
             const alerts = document.querySelectorAll('.animate-fade-in');
-
             alerts.forEach(function(alert) {
                 setTimeout(function() {
                     alert.style.transition = "all 0.6s ease";
                     alert.style.opacity = "0";
                     alert.style.transform = "translateY(-10px)";
-
                     setTimeout(() => alert.remove(), 600);
                 }, 4000);
             });

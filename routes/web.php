@@ -6,6 +6,10 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\TahunAjaranController;
 use App\Http\Controllers\Admin\SiswaController;
 use App\Http\Controllers\Admin\LaporanController;
+use App\Http\Controllers\Orangtua\JadwalController;
+use App\Http\Controllers\Orangtua\PerkembanganController;
+use App\Http\Controllers\Orangtua\SiswaProfileController;
+use App\Http\Controllers\Orangtua\ProfileController as OrangtuaProfile;
 use App\Http\Controllers\Guru\DashboardController as GuruDashboard;
 use App\Http\Controllers\Orangtua\DashboardController as OrangtuaDashboard;
 
@@ -76,6 +80,7 @@ Route::middleware(['auth', 'role:guru'])->prefix('guru')->name('guru.')->group(f
 
     // Menu Jadwal
     Route::get('/jadwal', [App\Http\Controllers\Guru\JadwalController::class, 'index'])->name('jadwal.index');
+    Route::get('/jadwal/{id}', [App\Http\Controllers\Guru\JadwalController::class, 'show'])->name('jadwal.show');
 
     // Menu Riwayat & Rekam Terapi
     Route::get('/rekam-terapi/history', [App\Http\Controllers\Guru\RekamTerapiController::class, 'history'])->name('rekam-terapi.history');
@@ -96,6 +101,29 @@ Route::middleware(['auth', 'role:guru'])->prefix('guru')->name('guru.')->group(f
 });
 
 // 6. Orang Tua Panel
-Route::middleware(['auth', 'role:orangtua'])->prefix('orangtua')->group(function () {
-    Route::get('/dashboard', [OrangtuaDashboard::class, 'index'])->name('orangtua.dashboard');
+// Tambahkan ->name('orangtua.') di bawah ini
+Route::middleware(['auth', 'role:orangtua'])->prefix('orangtua')->name('orangtua.')->group(function () {
+    
+    // Dashboard Utama
+    Route::get('/dashboard', [OrangtuaDashboard::class, 'index'])->name('dashboard'); // Jadi orangtua.dashboard
+    
+    Route::get('/switch-anak/{id}', [OrangtuaDashboard::class, 'switchAnak'])->name('switch');
+
+    // Menu Jadwal
+    Route::get('/jadwal', [JadwalController::class, 'index'])->name('jadwal');
+    Route::get('/jadwal/{id}', [JadwalController::class, 'show'])->name('jadwal.show');
+    Route::get('/hasil', [JadwalController::class, 'history'])->name('jadwal.history');
+
+    // Menu Monitoring & Laporan
+    Route::get('/perkembangan', [PerkembanganController::class, 'index'])->name('perkembangan');
+
+    // Profile 
+    Route::get('/profile', [OrangtuaProfile::class, 'edit'])->name('profile.edit');
+    Route::put('/profile', [OrangtuaProfile::class, 'update'])->name('profile.update');
+    Route::put('/profile/password', [OrangtuaProfile::class, 'updatePassword'])->name('profile.password');
+
+    // Profile Anak
+    Route::get('/profil-anak', [SiswaProfileController::class, 'edit'])->name('siswa.edit');
+    Route::put('/profil-anak', [SiswaProfileController::class, 'update'])->name('siswa.update');
+
 });

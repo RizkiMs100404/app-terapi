@@ -26,7 +26,6 @@ class JadwalController extends Controller
         ];
 
         // 3. Tentukan Tanggal & Hari Acuan
-        // Jika ada filter tanggal, pakai itu. Jika tidak, pakai Carbon::now() (Real-time hari ini).
         $tanggalDipilih = $request->filled('tanggal') ? $request->tanggal : Carbon::now()->format('Y-m-d');
         $hariInggris = Carbon::parse($tanggalDipilih)->format('l');
         $hariAcuan = $mapHari[$hariInggris];
@@ -35,21 +34,30 @@ class JadwalController extends Controller
         $query = JadwalTerapi::with(['siswa', 'tahunAjaran', 'rekamTerapi'])
             ->where('id_guru', $guru->id);
 
-        /**
-         * LOGIKA FILTER:
-         * Prioritas 1: Jika ada search, kita cari nama/nis tanpa batasan hari (opsional, tergantung keinginan).
-         * Prioritas 2: Jika tidak search atau filter spesifik, gunakan $hariAcuan (bisa hari ini atau hari dari input tanggal).
-         */
-
+        // Filter: Pencarian (Nama/NISN)
         if ($request->filled('search')) {
             $query->whereHas('siswa', function($q) use ($request) {
                 $q->where('nama_siswa', 'like', '%' . $request->search . '%')
-                  ->orWhere('nis', 'like', '%' . $request->search . '%');
+                  ->orWhere('nisn', 'like', '%' . $request->search . '%');
             });
         }
 
-        // Tetap filter berdasarkan hari kecuali jika Abang ingin hasil search muncul di semua hari
-        if (!$request->filled('search') || $request->filled('tanggal')) {
+        // Filter: Tingkat (SDLB/SMPLB/SMALB)
+        if ($request->filled('tingkat')) {
+            $query->whereHas('siswa', function($q) use ($request) {
+                $q->where('tingkat', $request->tingkat);
+            });
+        }
+
+        // Filter: Kelas
+        if ($request->filled('kelas')) {
+            $query->whereHas('siswa', function($q) use ($request) {
+                $q->where('kelas', $request->kelas);
+            });
+        }
+
+        // Filter: Hari (Jika tidak sedang mencari nama, default ke hari yang dipilih)
+        if (!$request->filled('search')) {
             $query->where('hari', $hariAcuan);
         }
 
@@ -59,7 +67,22 @@ class JadwalController extends Controller
         return view('guru.jadwal.index', [
             'jadwal' => $jadwal,
             'hariIni' => $hariAcuan,
-            'tanggalAktif' => $tanggalDipilih // Kirim balik ke view agar input date terisi
+            'tanggalAktif' => $tanggalDipilih 
         ]);
+    }
+
+    /**
+     * Menampilkan detail jadwal khusus untuk dashboard guru
+     */
+    public function show($id)
+    {
+        $guru = Auth::user()->guruTerapis;
+
+        // Ambil data jadwal dengan relasi, pastikan milik guru yang sedang login
+        $jadwal = JadwalTerapi::with(['siswa', 'guru.user', 'tahunAjaran'])
+            ->where('id_guru', $guru->id)
+            ->findOrFail($id);
+
+        return view('guru.jadwal.show', compact('jadwal'));
     }
 }

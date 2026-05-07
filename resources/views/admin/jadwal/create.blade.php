@@ -36,8 +36,13 @@
                                 <label class="text-sm font-bold text-indigo-900 ml-1">Pilih Siswa</label>
                                 <select name="id_siswa" required class="w-full bg-indigo-50/50 border-2 border-transparent rounded-2xl px-5 py-4 focus:border-indigo-500 focus:bg-white outline-none font-bold text-slate-700 appearance-none transition-all cursor-pointer">
                                     <option value="">-- Pilih Siswa --</option>
-                                    @foreach($siswa as $s) <option value="{{ $s->id }}">{{ $s->nama_siswa }}</option> @endforeach
+                                    @foreach($siswa as $s) 
+                                        <option value="{{ $s->id }}">
+                                            {{ strtoupper($s->nama_siswa) }} — ({{ $s->tingkat }} / KELAS {{ $s->kelas }})
+                                        </option> 
+                                    @endforeach
                                 </select>
+                                <p class="text-[10px] text-slate-400 ml-1 font-medium italic">*Daftar siswa mencakup nama, tingkat, dan kelas</p>
                             </div>
                             <div class="space-y-2">
                                 <label class="text-sm font-bold text-indigo-900 ml-1">Pilih Terapis</label>

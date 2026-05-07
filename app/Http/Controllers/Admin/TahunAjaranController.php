@@ -9,11 +9,26 @@ use Illuminate\Http\Request;
 class TahunAjaranController extends Controller
 {
     // 1. Menampilkan Tabel (Index)
-    public function index()
-    {
-        $dataTA = TahunAjaran::orderBy('created_at', 'desc')->get();
-        return view('admin.tahun_ajaran.index', compact('dataTA'));
-    }
+    public function index(Request $request)
+{
+    // Ambil input dari request
+    $search = $request->input('search');
+    $filter_semester = $request->input('filter_semester');
+
+    // Query dengan penanganan Filter & Search
+    $dataTA = TahunAjaran::query()
+        ->when($search, function ($query, $search) {
+            return $query->where('rentang_tahun', 'like', "%{$search}%");
+        })
+        ->when($filter_semester, function ($query, $filter_semester) {
+            return $query->where('semester', $filter_semester);
+        })
+        ->orderBy('created_at', 'desc')
+        ->paginate(10) // Bagus dikasih pagination kalau data mulai banyak
+        ->withQueryString(); // Agar link pagination tidak hilang saat search
+
+    return view('admin.tahun_ajaran.index', compact('dataTA'));
+}
 
     // 2. Menampilkan Halaman Form Tambah (Create) - INI YANG TADI ERROR
     public function create()

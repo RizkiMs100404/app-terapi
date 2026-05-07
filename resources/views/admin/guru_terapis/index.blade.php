@@ -12,7 +12,7 @@
             </div>
 
             <div class="flex items-center gap-3">
-                <a href="{{ route('guru-terapis.create') }}" class="flex items-center gap-3 px-6 py-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl shadow-xl shadow-indigo-200 transition-all active:scale-95 group">
+                <a href="{{ route('guru-terapis.create') }}" class="flex items-center gap-3 px-6 py-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl shadow-xl shadow-indigo-100 transition-all active:scale-95 group">
                     <svg class="w-5 h-5 text-indigo-200 group-hover:text-white transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path>
                     </svg>
@@ -22,8 +22,10 @@
         </div>
 
         {{-- Filter Section --}}
-        <div class="bg-white p-4 rounded-[2rem] border border-slate-100 shadow-sm mb-8">
+        <div class="bg-white p-5 rounded-[2.5rem] border border-slate-100 shadow-sm mb-8">
             <form action="{{ route('guru-terapis.index') }}" method="GET" class="flex flex-col lg:flex-row gap-4">
+                
+                {{-- Search Input --}}
                 <div class="relative flex-1 group">
                     <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                         <svg class="w-5 h-5 text-slate-400 group-focus-within:text-indigo-600 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -35,18 +37,30 @@
                         class="block w-full pl-12 pr-4 py-4 bg-slate-50 border-none rounded-2xl text-sm font-medium focus:ring-4 focus:ring-indigo-50 transition-all outline-none">
                 </div>
 
-                <div class="flex flex-wrap md:flex-nowrap gap-4">
-                    <select name="status_kerja" class="px-6 py-4 bg-slate-50 border-none rounded-2xl text-sm font-bold text-slate-700 focus:ring-4 focus:ring-indigo-50 outline-none">
+                <div class="flex flex-wrap md:flex-nowrap gap-3">
+                    {{-- Filter Tahun Akademik --}}
+                    <select name="id_tahun_ajaran" class="px-5 py-4 bg-slate-50 border-none rounded-2xl text-sm font-bold text-slate-700 focus:ring-4 focus:ring-indigo-50 outline-none min-w-[180px]">
+                        <option value="">Semua Tahun Ajaran</option>
+                        @foreach($dataTA as $ta)
+                            <option value="{{ $ta->id }}" {{ request('id_tahun_ajaran') == $ta->id ? 'selected' : '' }}>
+                                {{ $ta->rentang_tahun }} - {{ $ta->semester }} 
+                                {{ $ta->status_aktif ? '(Aktif)' : '' }}
+                            </option>
+                        @endforeach
+                    </select>
+
+                    {{-- Filter Status Kerja --}}
+                    <select name="status_kerja" class="px-5 py-4 bg-slate-50 border-none rounded-2xl text-sm font-bold text-slate-700 focus:ring-4 focus:ring-indigo-50 outline-none">
                         <option value="">Semua Status</option>
                         <option value="Aktif" {{ request('status_kerja') == 'Aktif' ? 'selected' : '' }}>Aktif</option>
                         <option value="Non-Aktif" {{ request('status_kerja') == 'Non-Aktif' ? 'selected' : '' }}>Non-Aktif</option>
                     </select>
 
-                    <button type="submit" class="px-8 py-4 bg-slate-900 text-white rounded-2xl font-bold text-sm hover:bg-slate-800 transition-all">
+                    <button type="submit" class="px-8 py-4 bg-slate-900 text-white rounded-2xl font-bold text-sm hover:bg-slate-800 transition-all shadow-lg shadow-slate-200">
                         FILTER
                     </button>
 
-                    @if(request()->anyFilled(['search', 'status_kerja']))
+                    @if(request()->anyFilled(['search', 'status_kerja', 'id_tahun_ajaran']))
                         <a href="{{ route('guru-terapis.index') }}" class="px-6 py-4 bg-red-50 text-red-600 rounded-2xl font-bold text-sm hover:bg-red-100 transition-all flex items-center justify-center">
                             RESET
                         </a>
@@ -60,12 +74,12 @@
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse">
                     <thead>
-                        <tr class="bg-slate-50/50">
-                            <th class="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Profil Guru</th>
-                            <th class="px-6 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">NIP & Kontak</th>
-                            <th class="px-6 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-center">Status</th>
-                            <th class="px-6 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest">Keahlian Terapi</th>
-                            <th class="px-8 py-6 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">Aksi</th>
+                        <tr class="bg-slate-50/50 text-slate-400">
+                            <th class="px-8 py-6 text-[10px] font-black uppercase tracking-widest">Profil Terapis</th>
+                            <th class="px-6 py-6 text-[10px] font-black uppercase tracking-widest">NIP & Kontak</th>
+                            <th class="px-6 py-6 text-[10px] font-black uppercase tracking-widest text-center">Status</th>
+                            <th class="px-6 py-6 text-[10px] font-black uppercase tracking-widest">Keahlian Terapi</th>
+                            <th class="px-8 py-6 text-[10px] font-black uppercase tracking-widest text-right">Aksi</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-slate-50">
@@ -73,13 +87,28 @@
                         <tr class="hover:bg-slate-50/50 transition-colors group">
                             <td class="px-8 py-6">
                                 <div class="flex items-center gap-4">
-                                    <div class="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center text-white font-black text-lg shadow-md group-hover:scale-110 transition-transform">
-                                        {{ substr($guru->user->name, 0, 1) }}
+                                    {{-- FOTO LOGIC START --}}
+                                    <div class="relative flex-shrink-0 w-14 h-14"> {{-- Tambah flex-shrink-0 dan kunci width/height di sini --}}
+                                        @if($guru->foto)
+                                            <img src="{{ asset('storage/foto_guru/' . $guru->foto) }}" 
+                                                alt="{{ $guru->user->name }}" 
+                                                class="w-full h-full aspect-square rounded-2xl object-cover shadow-md border-2 border-white group-hover:scale-105 transition-transform">
+                                        @else
+                                            <div class="w-full h-full aspect-square bg-gradient-to-br from-indigo-400 to-indigo-600 rounded-2xl flex items-center justify-center text-white font-black text-lg shadow-md group-hover:scale-105 transition-transform">
+                                                {{ substr($guru->user->name, 0, 1) }}
+                                            </div>
+                                        @endif
+                                        
+                                        {{-- Gender Badge --}}
+                                        <div class="absolute -bottom-1 -right-1 w-6 h-6 rounded-full border-2 border-white flex items-center justify-center {{ $guru->jenis_kelamin == 'L' ? 'bg-blue-500' : 'bg-pink-500' }}">
+                                            <span class="text-[8px] text-white font-bold">{{ $guru->jenis_kelamin }}</span>
+                                        </div>
                                     </div>
+                                    {{-- FOTO LOGIC END --}}
                                     <div>
-                                        <p class="font-bold text-slate-900 leading-none mb-1">{{ $guru->user->name }}</p>
-                                        <p class="text-xs text-slate-400 font-medium italic">
-                                            {{ $guru->jenis_kelamin == 'L' ? 'Laki-laki' : 'Perempuan' }}
+                                        <p class="font-bold text-slate-900 leading-none mb-1 group-hover:text-indigo-600 transition-colors">{{ $guru->user->name }}</p>
+                                        <p class="text-xs text-slate-400 font-medium">
+                                            {{ $guru->user->email }}
                                         </p>
                                     </div>
                                 </div>
@@ -91,13 +120,13 @@
                                         <span class="text-sm font-bold tracking-tight">{{ $guru->nip }}</span>
                                     </div>
                                     <div class="flex items-center gap-2 text-slate-500">
-                                        <svg class="w-3.5 h-3.5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
+                                        <svg class="w-3.5 h-3.5 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path></svg>
                                         <span class="text-xs font-medium">{{ $guru->nomor_hp }}</span>
                                     </div>
                                 </div>
                             </td>
                             <td class="px-6 py-6 text-center">
-                                <span class="px-4 py-1.5 {{ $guru->status_kerja == 'Aktif' ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-600' }} text-[10px] font-black uppercase tracking-widest rounded-full border {{ $guru->status_kerja == 'Aktif' ? 'border-emerald-100' : 'border-red-100' }}">
+                                <span class="px-4 py-1.5 {{ $guru->status_kerja == 'Aktif' ? 'bg-indigo-50 text-indigo-600 border-indigo-100' : 'bg-red-50 text-red-600 border-red-100' }} text-[10px] font-black uppercase tracking-widest rounded-full border shadow-sm">
                                     {{ $guru->status_kerja }}
                                 </span>
                             </td>
@@ -107,7 +136,7 @@
                                         $skills = is_array($guru->keahlian_terapi) ? $guru->keahlian_terapi : json_decode($guru->keahlian_terapi, true) ?? [];
                                     @endphp
                                     @forelse($skills as $skill)
-                                        <span class="px-2.5 py-1 bg-slate-100 text-slate-600 text-[9px] font-black uppercase rounded-lg border border-slate-200 shadow-sm">
+                                        <span class="px-2.5 py-1 bg-indigo-50 text-indigo-700 text-[9px] font-black uppercase rounded-lg border border-indigo-100 shadow-sm group-hover:bg-indigo-600 group-hover:text-white transition-all">
                                             {{ $skill }}
                                         </span>
                                     @empty
@@ -120,7 +149,7 @@
                                     <a href="{{ route('guru-terapis.show', $guru->id) }}" class="p-2.5 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all" title="Detail">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path></svg>
                                     </a>
-                                    <a href="{{ route('guru-terapis.edit', $guru->id) }}" class="p-2.5 text-slate-400 hover:text-emerald-600 hover:bg-emerald-50 rounded-xl transition-all" title="Edit">
+                                    <a href="{{ route('guru-terapis.edit', $guru->id) }}" class="p-2.5 text-slate-400 hover:text-amber-600 hover:bg-amber-50 rounded-xl transition-all" title="Edit">
                                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
                                     </a>
                                     <form action="{{ route('guru-terapis.destroy', $guru->id) }}" method="POST" class="inline" onsubmit="return confirm('Hapus data guru terapis dan akun loginnya?')">
@@ -135,7 +164,7 @@
                         @empty
                         <tr>
                             <td colspan="5" class="px-8 py-20 text-center">
-                                <div class="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mx-auto mb-6 text-slate-300">
+                                <div class="w-20 h-20 bg-indigo-50 rounded-full flex items-center justify-center mx-auto mb-6 text-indigo-300">
                                     <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
                                 </div>
                                 <h3 class="text-xl font-bold text-slate-900">Belum Ada Tenaga Ahli</h3>
@@ -149,9 +178,11 @@
         </div>
 
         {{-- Pagination --}}
-        <div class="mt-10">
-            {{ $dataGuru->links() }}
-        </div>
+        @if($dataGuru->hasPages())
+            <div class="mt-10">
+                {{ $dataGuru->links() }}
+            </div>
+        @endif
     </div>
 </div>
 @endsection

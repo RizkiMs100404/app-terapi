@@ -17,6 +17,9 @@ return new class extends Migration
             $table->foreignId('id_tahun_ajaran')->constrained('tahun_ajaran');
             $table->string('nis')->unique();
             $table->string('nama_siswa');
+            $table->string('kelas'); 
+            $table->enum('tingkat', ['SDLB', 'SMPLB', 'SMALB']);
+            $table->string('foto')->nullable();
             $table->enum('jenis_kelamin', ['L', 'P']);
             $table->date('tanggal_lahir');
             // Kolom Wilayah (Siap pakai API)

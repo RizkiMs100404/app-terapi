@@ -130,7 +130,7 @@ class RekamTerapiController extends Controller
         }
     }
 
-    public function history(Request $request)
+        public function history(Request $request)
     {
         // 1. Safety Check Relasi
         if (!auth()->user()->guruTerapis) {
@@ -140,12 +140,13 @@ class RekamTerapiController extends Controller
         $guruId = auth()->user()->guruTerapis->id;
 
         // 2. Base Query dengan Eager Loading
+        // Tambahkan relasi siswa agar tidak N+1 query saat looping di view
         $query = RekamTerapi::with(['jadwal.siswa'])
             ->whereHas('jadwal', function($q) use ($guruId) {
                 $q->where('id_guru', $guruId);
             });
 
-        // 3. Search Logic yang Lebih Luas
+        // 3. Search Logic (Nama, Sesi, Hasil, Status)
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function($q) use ($search) {
@@ -158,11 +159,25 @@ class RekamTerapiController extends Controller
             });
         }
 
-        // 4. Sort & Paginate
-        // Gunakan 12 atau 10 agar pas dengan grid jika nanti mau ganti layout
+        // 4. Filter Berdasarkan Tingkat (SDLB, SMPLB, SMALB)
+        if ($request->filled('tingkat')) {
+            $query->whereHas('jadwal.siswa', function($q) {
+                $q->where('tingkat', request('tingkat'));
+            });
+        }
+
+        // 5. Filter Berdasarkan Kelas (1-12)
+        if ($request->filled('kelas')) {
+            $query->whereHas('jadwal.siswa', function($q) {
+                $q->where('kelas', request('kelas'));
+            });
+        }
+
+        // 6. Sort & Paginate
         $riwayat = $query->latest('tanggal_pelaksanaan')
                         ->latest('created_at')
-                        ->paginate(10);
+                        ->paginate(10)
+                        ->withQueryString(); // Penting: Agar filter tidak hilang saat pindah halaman pagination
 
         return view('guru.rekam-terapi.history', compact('riwayat'));
     }

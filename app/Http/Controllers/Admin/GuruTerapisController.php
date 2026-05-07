@@ -9,6 +9,7 @@ use App\Models\TahunAjaran;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 
 class GuruTerapisController extends Controller
@@ -17,13 +18,14 @@ class GuruTerapisController extends Controller
     {
         $search = $request->get('search');
         $filterStatus = $request->get('status_kerja');
+        $filterTA = $request->get('id_tahun_ajaran');
 
         $dataGuru = GuruTerapis::with(['user', 'tahunAjaran'])
             ->when($search, function($query) use ($search) {
                 $query->where(function($q) use ($search) {
                     $q->where('nip', 'like', "%$search%")
                       ->orWhere('nomor_hp', 'like', "%$search%")
-                      ->orWhere('keahlian_terapi', 'like', "%$search%") // Search di kolom text json
+                      ->orWhere('keahlian_terapi', 'like', "%$search%") 
                       ->orWhereHas('user', function($userQuery) use ($search) {
                           $userQuery->where('name', 'like', "%$search%")
                                     ->orWhere('email', 'like', "%$search%");
@@ -33,11 +35,16 @@ class GuruTerapisController extends Controller
             ->when($filterStatus, function($query) use ($filterStatus) {
                 $query->where('status_kerja', $filterStatus);
             })
+            ->when($filterTA, function($query) use ($filterTA) {
+                $query->where('id_tahun_ajaran', $filterTA);
+            })
             ->latest()
             ->paginate(10)
             ->withQueryString();
 
-        return view('admin.guru_terapis.index', compact('dataGuru'));
+        $dataTA = TahunAjaran::orderBy('rentang_tahun', 'desc')->get();
+
+        return view('admin.guru_terapis.index', compact('dataGuru', 'dataTA'));
     }
 
     public function create()
@@ -63,6 +70,7 @@ class GuruTerapisController extends Controller
             'nomor_hp'        => 'required|string|max:20',
             'status_kerja'    => 'required|in:Aktif,Non-Aktif',
             'keahlian_terapi' => 'required|array|min:1',
+            'foto'            => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ], [
             'keahlian_terapi.required' => 'Pilih minimal satu keahlian terapi.',
             'nip.unique' => 'NIP sudah terdaftar di sistem.'
@@ -78,14 +86,23 @@ class GuruTerapisController extends Controller
                 'role'     => 'guru',
             ]);
 
-            $user->guruTerapis()->create([
+            $guruData = [
                 'id_tahun_ajaran' => $request->id_tahun_ajaran,
                 'nip'             => $request->nip,
                 'jenis_kelamin'   => $request->jenis_kelamin,
                 'nomor_hp'        => $request->nomor_hp,
-                'keahlian_terapi' => $request->keahlian_terapi, // Otomatis dicast ke JSON oleh Model
+                'keahlian_terapi' => $request->keahlian_terapi,
                 'status_kerja'    => $request->status_kerja,
-            ]);
+            ];
+
+            if ($request->hasFile('foto')) {
+                $file = $request->file('foto');
+                $nama_foto = time() . "_" . $file->getClientOriginalName();
+                $file->storeAs('public/foto_guru', $nama_foto);
+                $guruData['foto'] = $nama_foto;
+            }
+
+            $user->guruTerapis()->create($guruData);
 
             DB::commit();
             return redirect()->route('guru-terapis.index')->with('success', 'Terapis baru berhasil diregistrasi!');
@@ -95,17 +112,34 @@ class GuruTerapisController extends Controller
         }
     }
 
+    /**
+     * Menampilkan Detail Guru Terapis
+     */
     public function show($id)
     {
         $guru = GuruTerapis::with(['user', 'tahunAjaran'])->findOrFail($id);
+        
+        // Pastikan keahlian_terapi di-decode jika tersimpan sebagai string JSON
+        if (is_string($guru->keahlian_terapi)) {
+            $guru->keahlian_terapi = json_decode($guru->keahlian_terapi, true);
+        }
+
         return view('admin.guru_terapis.show', compact('guru'));
     }
 
+    /**
+     * Menampilkan Form Edit
+     */
     public function edit($id)
     {
         $guru = GuruTerapis::with('user')->findOrFail($id);
         $tahunAjaran = TahunAjaran::all();
         $pilihanKeahlian = ['Wicara', 'Okupasi', 'Perilaku', 'Sensori Integrasi', 'Fisioterapi', 'Psikologi'];
+        
+        // Konversi ke array jika data di DB berupa string
+        if (is_string($guru->keahlian_terapi)) {
+            $guru->keahlian_terapi = json_decode($guru->keahlian_terapi, true);
+        }
 
         return view('admin.guru_terapis.edit', compact('guru', 'tahunAjaran', 'pilihanKeahlian'));
     }
@@ -125,6 +159,7 @@ class GuruTerapisController extends Controller
             'jenis_kelamin'   => 'required|in:L,P',
             'status_kerja'    => 'required|in:Aktif,Non-Aktif',
             'keahlian_terapi' => 'required|array|min:1',
+            'foto'            => 'nullable|image|mimes:jpeg,png,jpg|max:2048',
         ]);
 
         DB::beginTransaction();
@@ -139,20 +174,34 @@ class GuruTerapisController extends Controller
             }
             $user->update($userData);
 
-            $guru->update([
+            $guruData = [
                 'id_tahun_ajaran' => $request->id_tahun_ajaran,
                 'nip'             => $request->nip,
                 'jenis_kelamin'   => $request->jenis_kelamin,
                 'nomor_hp'        => $request->nomor_hp,
                 'keahlian_terapi' => $request->keahlian_terapi,
                 'status_kerja'    => $request->status_kerja,
-            ]);
+            ];
+
+            if ($request->hasFile('foto')) {
+                // Hapus foto lama jika ada
+                if ($guru->foto) {
+                    Storage::delete('public/foto_guru/' . $guru->foto);
+                }
+                
+                $file = $request->file('foto');
+                $nama_foto = time() . "_" . $file->getClientOriginalName();
+                $file->storeAs('public/foto_guru', $nama_foto);
+                $guruData['foto'] = $nama_foto;
+            }
+
+            $guru->update($guruData);
 
             DB::commit();
             return redirect()->route('guru-terapis.index')->with('success', 'Data Terapis berhasil diperbarui!');
         } catch (\Exception $e) {
             DB::rollBack();
-            return back()->with('error', 'Gagal update data.');
+            return back()->with('error', 'Gagal update data: ' . $e->getMessage());
         }
     }
 
@@ -162,8 +211,14 @@ class GuruTerapisController extends Controller
         DB::beginTransaction();
         try {
             $user = $guru->user;
+
+            if ($guru->foto) {
+                Storage::delete('public/foto_guru/' . $guru->foto);
+            }
+
             $guru->delete();
             if($user) $user->delete();
+
             DB::commit();
             return redirect()->route('guru-terapis.index')->with('success', 'Data Terapis telah dihapus.');
         } catch (\Exception $e) {

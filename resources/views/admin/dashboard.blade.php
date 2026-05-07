@@ -102,66 +102,96 @@
             </div>
         </div>
 
-        {{-- Queue Section --}}
-        <div class="bg-white rounded-[2.5rem] p-8 shadow-sm border border-slate-100 flex flex-col">
-            <div class="flex items-center justify-between mb-8">
-                <h2 class="text-xl font-extrabold text-slate-800 tracking-tight">Jadwal Hari Ini</h2>
-                <span class="bg-indigo-50 text-indigo-600 text-[10px] font-black px-2 py-1 rounded-lg uppercase">{{ count($jadwalHariIni) }} Sesi</span>
+       {{-- Queue Section --}}
+<div class="bg-white rounded-[2.5rem] p-8 shadow-sm border border-slate-100 flex flex-col h-full">
+    <div class="flex items-center justify-between mb-8">
+        <div>
+            <h2 class="text-xl font-extrabold text-slate-800 tracking-tight">Jadwal Hari Ini</h2>
+            <p class="text-[11px] text-slate-400 font-medium">Monitoring antrean sesi terapi</p>
+        </div>
+        <span class="bg-indigo-50 text-indigo-600 text-[10px] font-black px-3 py-1.5 rounded-xl uppercase tracking-wider">{{ count($jadwalHariIni) }} Sesi</span>
+    </div>
+
+    <div class="space-y-4 flex-1 overflow-y-auto pr-2 custom-scrollbar" style="max-height: 450px;">
+        @forelse($jadwalHariIni as $j)
+        <div class="group relative bg-slate-50 hover:bg-white border border-transparent hover:border-indigo-100 p-5 rounded-[2rem] transition-all duration-300 hover:shadow-xl hover:shadow-indigo-500/5">
+            
+            {{-- Floating Room Tag --}}
+            <div class="absolute top-4 right-4">
+                <span class="text-[9px] font-black uppercase tracking-widest bg-white shadow-sm border border-slate-100 px-2.5 py-1 rounded-lg text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+                    {{ $j->ruang_terapi ?? 'R. Umum' }}
+                </span>
             </div>
 
-            <div class="space-y-4 flex-1 overflow-y-auto pr-2 custom-scrollbar" style="max-height: 400px;">
-                @forelse($jadwalHariIni as $j)
-                <div class="group relative bg-slate-50 hover:bg-white border border-transparent hover:border-indigo-100 p-4 rounded-[1.5rem] transition-all duration-300 hover:shadow-lg hover:shadow-indigo-500/5">
-                    <div class="flex justify-between items-center">
-                        <div class="flex items-center gap-4">
-                            <div class="relative">
-                                <div class="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center font-bold text-white shadow-md">
-                                    {{ substr($j->siswa->nama_siswa, 0, 1) }}
-                                </div>
-                                <div class="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-500 border-2 border-white rounded-full"></div>
+            <div class="flex items-start gap-4">
+                {{-- Left: Foto --}}
+                <div class="relative flex-shrink-0 mt-1">
+                    <div class="w-14 h-14 rounded-[1.2rem] overflow-hidden shadow-md border-2 border-white group-hover:border-indigo-100 transition-all">
+                        @if($j->siswa->foto && Storage::disk('public')->exists('foto_siswa/' . $j->siswa->foto))
+                            <img src="{{ asset('storage/foto_siswa/' . $j->siswa->foto) }}" 
+                                 class="w-full h-full object-cover">
+                        @else
+                            <div class="w-full h-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center font-bold text-white uppercase text-xl">
+                                {{ substr($j->siswa->nama_siswa, 0, 1) }}
                             </div>
-                            <div>
-                                <h4 class="font-bold text-slate-800 text-sm group-hover:text-indigo-600 transition-colors">{{ $j->siswa->nama_siswa }}</h4>
-                                <div class="flex flex-col gap-0.5 mt-1">
-                                    <span class="text-[11px] text-slate-500 flex items-center gap-1">
-                                        <i class="far fa-clock text-indigo-400"></i> {{ $j->jam_mulai }} WIB
-                                    </span>
-                                    <span class="text-[11px] text-slate-500 font-medium">
-                                        {{ $j->jenis_terapi }}
-                                    </span>
-                                </div>
+                        @endif
+                    </div>
+                    <div class="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-500 border-2 border-white rounded-full shadow-sm"></div>
+                </div>
+                
+                {{-- Right: Content --}}
+                <div class="flex-1 pr-12"> {{-- Padding right supaya tidak tabrakan dengan floating tag --}}
+                    <h4 class="font-black text-slate-800 text-sm group-hover:text-indigo-600 transition-colors truncate">{{ $j->siswa->nama_siswa }}</h4>
+                    
+                    {{-- Info Badges --}}
+                    <div class="flex items-center gap-2 mt-2">
+                        <span class="text-[9px] font-bold px-2 py-0.5 bg-indigo-100 text-indigo-700 rounded-md uppercase tracking-tight">
+                            {{ $j->siswa->tingkat }} - {{ $j->siswa->kelas }}
+                        </span>
+                        <span class="text-[9px] font-bold px-2 py-0.5 bg-slate-200 text-slate-600 rounded-md uppercase tracking-tight">
+                             {{ $j->jenis_terapi }}
+                        </span>
+                    </div>
+
+                    {{-- Time Info --}}
+                    <div class="flex items-center gap-3 mt-3 text-slate-500">
+                        <div class="flex items-center gap-1.5">
+                            <div class="w-5 h-5 rounded-full bg-white flex items-center justify-center shadow-sm border border-slate-100">
+                                <i class="far fa-clock text-indigo-500 text-[10px]"></i>
                             </div>
-                        </div>
-                        <div class="flex flex-col items-end gap-2">
-                            <span class="text-[9px] font-black uppercase tracking-tighter bg-white border border-slate-200 px-2 py-1 rounded-lg text-slate-600">
-                                {{ $j->ruang_terapi ?? 'R. Umum' }}
-                            </span>
-                            <button class="opacity-0 group-hover:opacity-100 transition-opacity p-1.5 bg-indigo-50 text-indigo-600 rounded-lg hover:bg-indigo-600 hover:text-white">
-                            </button>
+                            <span class="text-xs font-bold text-slate-700">{{ \Carbon\Carbon::parse($j->jam_mulai)->format('H:i') }} <span class="text-[9px] text-slate-400 font-medium">WIB</span></span>
                         </div>
                     </div>
                 </div>
-                @empty
-                <div class="flex flex-col items-center justify-center py-20 text-center">
-                    <div class="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mb-4">
-                        <i class="fas fa-calendar-day text-slate-200 text-3xl"></i>
-                    </div>
-                    <p class="text-slate-400 font-medium text-sm italic">Jadwal masih kosong</p>
-                </div>
-                @endforelse
             </div>
 
-            <div class="mt-6">
-                <a href="{{ url('admin/jadwal-terapi') }}"
-                   class="group/btn w-full py-4 bg-slate-900 hover:bg-indigo-600 text-white text-xs font-bold rounded-2xl transition-all duration-300 flex items-center justify-center gap-3 shadow-lg shadow-slate-200 hover:shadow-indigo-200 overflow-hidden relative">
-                    {{-- Efek Cahaya Running (Glass Effect) --}}
-                    <div class="absolute inset-0 w-1/2 h-full bg-gradient-to-r from-transparent via-white/10 to-transparent -skew-x-[20deg] group-hover/btn:animate-[shimmer_1.5s_infinite] -left-full"></div>
-
-                    <span class="relative z-10">Lihat Semua Jadwal</span>
-                    <i class="fas fa-arrow-right text-[10px] group-hover/btn:translate-x-1 transition-transform relative z-10"></i>
+            {{-- Hover Action --}}
+            <div class="absolute bottom-4 right-4">
+                 <a href="{{ route('jadwal-terapi.show', $j->id) }}" class="opacity-0 group-hover:opacity-100 transition-all flex items-center justify-center w-8 h-8 bg-indigo-600 text-white rounded-xl shadow-lg shadow-indigo-200 hover:scale-110 active:scale-95">
+                    <i class="fas fa-chevron-right text-[10px]"></i>
                 </a>
             </div>
         </div>
+        @empty
+        <div class="flex flex-col items-center justify-center py-20 text-center">
+            <div class="w-20 h-20 bg-slate-50 rounded-full flex items-center justify-center mb-4">
+                <i class="fas fa-calendar-day text-slate-200 text-3xl"></i>
+            </div>
+            <p class="text-slate-400 font-medium text-sm italic">Jadwal masih kosong</p>
+        </div>
+        @endforelse
+    </div>
+
+    <div class="mt-6">
+        <a href="{{ url('admin/jadwal-terapi') }}"
+        class="group/btn w-full py-4 bg-slate-900 hover:bg-indigo-600 text-white text-xs font-bold rounded-2xl transition-all duration-300 flex items-center justify-center gap-3 shadow-lg shadow-slate-200 hover:shadow-indigo-200 overflow-hidden relative">
+            <div class="absolute inset-0 w-1/2 h-full bg-gradient-to-r from-transparent via-white/10 to-transparent -skew-x-[20deg] group-hover/btn:animate-[shimmer_1.5s_infinite] -left-full"></div>
+            <span class="relative z-10">Buka Manajemen Jadwal</span>
+            <i class="fas fa-arrow-right text-[10px] group-hover/btn:translate-x-1 transition-transform relative z-10"></i>
+        </a>
+    </div>
+</div>
+
     </div>
 </div>
 

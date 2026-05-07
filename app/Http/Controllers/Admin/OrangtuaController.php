@@ -17,33 +17,47 @@ class OrangtuaController extends Controller
      * Display a listing of the resource with Search & Filter
      */
     public function index(Request $request)
-    {
-        $search = $request->get('search');
-        $filterTahun = $request->get('tahun_ajaran');
+{
+    $search = $request->get('search');
+    $filterTahun = $request->get('tahun_ajaran');
+    $filterTingkat = $request->get('tingkat'); // Tambahan filter tingkat
 
-        $dataOrangtua = Orangtua::with(['user', 'tahunAjaran'])
-            // Search Logic
-            ->when($search, function($query) use ($search) {
-                $query->where('nama_ibu', 'like', "%$search%")
-                      ->orWhere('nomor_hp_aktif', 'like', "%$search%")
-                      ->orWhereHas('user', function($q) use ($search) {
-                          $q->where('name', 'like', "%$search%")
+    $dataOrangtua = Orangtua::with(['user', 'tahunAjaran', 'siswa']) // Tambah relasi 'siswa'
+        // Search Logic
+        ->when($search, function($query) use ($search) {
+            $query->where(function($q) use ($search) {
+                $q->where('nama_ibu', 'like', "%$search%")
+                  ->orWhere('nomor_hp_aktif', 'like', "%$search%")
+                  ->orWhereHas('user', function($userQ) use ($search) {
+                      $userQ->where('name', 'like', "%$search%")
                             ->orWhere('email', 'like', "%$search%")
                             ->orWhere('username', 'like', "%$search%");
-                      });
-            })
-            // Filter Logic
-            ->when($filterTahun, function($query) use ($filterTahun) {
-                $query->where('id_tahun_ajaran', $filterTahun);
-            })
-            ->latest()
-            ->paginate(10)
-            ->withQueryString();
+                  })
+                  // Tambahan: Orang tua bisa dicari berdasarkan nama anak
+                  ->orWhereHas('siswa', function($siswaQ) use ($search) {
+                      $siswaQ->where('nama_siswa', 'like', "%$search%")
+                             ->orWhere('nis', 'like', "%$search%");
+                  });
+            });
+        })
+        // Filter Berdasarkan Tahun Ajaran
+        ->when($filterTahun, function($query) use ($filterTahun) {
+            $query->where('id_tahun_ajaran', $filterTahun);
+        })
+        // Filter Berdasarkan Tingkat Anak (Jika dibutuhkan di menu orang tua)
+        ->when($filterTingkat, function($query) use ($filterTingkat) {
+            $query->whereHas('siswa', function($q) use ($filterTingkat) {
+                $q->where('tingkat', $filterTingkat);
+            });
+        })
+        ->latest()
+        ->paginate(10)
+        ->withQueryString();
 
-        $listTahunAjaran = TahunAjaran::all();
+    $listTahunAjaran = TahunAjaran::all();
 
-        return view('admin.orangtua.index', compact('dataOrangtua', 'listTahunAjaran'));
-    }
+    return view('admin.orangtua.index', compact('dataOrangtua', 'listTahunAjaran'));
+}
 
     /**
      * Show the form for creating a new resource.

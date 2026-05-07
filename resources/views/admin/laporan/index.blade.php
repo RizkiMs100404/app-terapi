@@ -5,16 +5,16 @@
     <div class="max-w-7xl mx-auto">
         {{-- Alert Notifikasi --}}
         @if(session('error'))
-<div id="alert-error" class="mb-6 p-4 bg-red-50 border-l-4 border-red-500 rounded-2xl flex items-center gap-4 transition-all duration-500 animate-bounce">
-    <div class="bg-red-500 text-white w-10 h-10 rounded-full flex items-center justify-center shadow-lg shadow-red-200">
-        <i class="fa-solid fa-triangle-exclamation"></i>
-    </div>
-    <div>
-        <h4 class="font-black text-red-800 text-sm uppercase tracking-tight">Oops, Gagal!</h4>
-        <p class="text-red-600 text-xs font-bold">{{ session('error') }}</p>
-    </div>
-</div>
-@endif
+        <div id="alert-error" class="mb-6 p-4 bg-red-50 border-l-4 border-red-500 rounded-2xl flex items-center gap-4 transition-all duration-500 animate-bounce">
+            <div class="bg-red-500 text-white w-10 h-10 rounded-full flex items-center justify-center shadow-lg shadow-red-200">
+                <i class="fa-solid fa-triangle-exclamation"></i>
+            </div>
+            <div>
+                <h4 class="font-black text-red-800 text-sm uppercase tracking-tight">Oops, Gagal!</h4>
+                <p class="text-red-600 text-xs font-bold">{{ session('error') }}</p>
+            </div>
+        </div>
+        @endif
 
         <div class="mb-8">
             <h1 class="text-4xl font-black text-slate-900">Laporan <span class="text-blue-600">Perkembangan</span></h1>
@@ -34,7 +34,9 @@
                         <select name="siswa_id" class="w-full bg-slate-50 border-none rounded-2xl px-4 py-4 focus:ring-2 focus:ring-blue-500 font-bold text-slate-700">
                             <option value="">Semua Siswa</option>
                             @foreach($siswa as $s)
-                                <option value="{{ $s->id }}" {{ request('siswa_id') == $s->id ? 'selected' : '' }}>{{ $s->nama_siswa }}</option>
+                                <option value="{{ $s->id }}" {{ request('siswa_id') == $s->id ? 'selected' : '' }}>
+                                    {{ $s->nama_siswa }} ({{ $s->tingkat }} - Kls {{ $s->kelas }})
+                                </option>
                             @endforeach
                         </select>
                     </div>
@@ -110,7 +112,7 @@
                 <table class="w-full text-left border-collapse">
                     <thead class="bg-slate-50/50">
                         <tr>
-                            <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Siswa & Terapis</th>
+                            <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Siswa & Info Kelas</th>
                             <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] text-center">Sesi</th>
                             <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em]">Tanggal</th>
                             <th class="px-8 py-5 text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] text-center">Skor</th>
@@ -122,7 +124,15 @@
                         <tr class="group hover:bg-blue-50/30 transition-all">
                             <td class="px-8 py-5">
                                 <div class="font-black text-slate-800 group-hover:text-blue-700 transition-colors">{{ $data->jadwal->siswa->nama_siswa }}</div>
-                                <div class="text-[9px] font-bold text-slate-400 uppercase mt-1 tracking-tighter">Guru: {{ $data->jadwal->guru->user->name }}</div>
+                                <div class="flex items-center gap-2 mt-1">
+                                    <span class="text-[9px] font-black bg-slate-100 text-slate-500 px-1.5 py-0.5 rounded uppercase tracking-tighter border border-slate-200">
+                                        {{ $data->jadwal->siswa->tingkat }}
+                                    </span>
+                                    <span class="text-[9px] font-black bg-blue-50 text-blue-600 px-1.5 py-0.5 rounded uppercase tracking-tighter border border-blue-100">
+                                        Kls {{ $data->jadwal->siswa->kelas }}
+                                    </span>
+                                </div>
+                                <div class="text-[9px] font-bold text-slate-400 uppercase mt-1.5 tracking-tighter italic">Guru: {{ $data->jadwal->guru->user->name }}</div>
                             </td>
                             <td class="px-8 py-5 text-center">
                                 <span class="bg-blue-600 text-white px-4 py-1.5 rounded-xl text-[10px] font-black shadow-lg shadow-blue-200">SESI {{ $data->nomor_sesi }}</span>
@@ -158,12 +168,11 @@
     </div>
 </div>
 
-{{-- Script Chart.js --}}
+{{-- Script Chart.js tetap sama --}}
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
     const ctx = document.getElementById('chartLaporan').getContext('2d');
 
-    // Gradient effect untuk grafik
     let gradient = ctx.createLinearGradient(0, 0, 0, 400);
     gradient.addColorStop(0, 'rgba(37, 99, 235, 0.2)');
     gradient.addColorStop(1, 'rgba(37, 99, 235, 0)');
@@ -198,22 +207,15 @@
         }
     });
 
-    // Tunggu dokumen selesai loading
     document.addEventListener('DOMContentLoaded', function() {
         const alertError = document.getElementById('alert-error');
-
         if (alertError) {
-            // Set timer 3 detik (3000ms)
             setTimeout(function() {
-                // Tambahkan efek transparan
                 alertError.style.opacity = '0';
                 alertError.style.transform = 'translateY(-20px)';
-
-                // Hapus elemen dari layar setelah efek selesai (detik ke-3.5)
                 setTimeout(function() {
                     alertError.remove();
                 }, 500);
-
             }, 3000);
         }
     });

@@ -13,6 +13,7 @@ class GuruTerapis extends Model
         'nip',
         'jenis_kelamin',
         'nomor_hp',
+        'foto',
         'keahlian_terapi',
         'status_kerja'
     ];
